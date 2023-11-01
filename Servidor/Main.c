@@ -10,7 +10,7 @@
 //este struct es cuando se conecte un cliente , va a crear un struct llamado acceptedsocket
 //que contiene el acceptedsocket file descriptor, un addres
 // un error si se desconecta y un boolean , para saber si fue aceptado correctamente
-struct AcceptedSocket
+struct AcceptedSocket //aaa
 {
     int acceptedSocketFD;
     struct sockaddr_in address;
