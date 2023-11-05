@@ -8,5 +8,7 @@ public class Main {
         Socket socket = new Socket("localhost",9900);
         Cliente clientes = new Cliente(socket , "luis");
         clientes.sendMessaje();
+        while(true){
+        }
     }
 }

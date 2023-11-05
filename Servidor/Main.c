@@ -1,10 +1,10 @@
 //
 // Created by huevitoentorta on 30/10/23.
 //
-#include "socketutil.c"
+
 #include <unistd.h>//para cerrar los sockets
 #include <stdbool.h>
-#include <pthread.h>
+#include "Servidor.h"
 
 #define MAX_MESSAGE_LENGTH 1024
 //este struct es cuando se conecte un cliente , va a crear un struct llamado acceptedsocket
@@ -24,6 +24,8 @@ void receiveandprintData(const struct AcceptedSocket *clientSocket);
 
 
 int main(){
+    iniciarServidor();
+    /*
     int serverSocket= createTCPIpv4Socket();//crea el serversocket
     //crea un addres y empieza a escuchar en ese puerto
     //la ip deberia de ser localhost
@@ -39,6 +41,7 @@ int main(){
     receiveandprintData(clientSocket);
     close(clientSocket->acceptedSocketFD); // Cierra el socket del servidor
     shutdown(serverSocket, SHUT_RDWR);
+     */
     /*
      * int openSOcket=0;//me indica si el socket esta abierto o no
     struct sockaddr_in clientaddres;
@@ -79,6 +82,7 @@ int main(){
     close(serverSocket); // Cierra el socket del servidor
     shutdown(serverSocket, SHUT_RDWR);
     return 0;*/
+
 }
 
 

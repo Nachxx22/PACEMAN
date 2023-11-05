@@ -21,7 +21,17 @@ public class Cliente {
     }
     public void sendMessaje(){
         try{
+            //nota a C le deben de llegar chars , no strings al buffer.
+            char[] letra = new char[5];
+            letra[0]='h';
+            letra[1]='o';
+            letra[2]='l';
+            letra[3]='a';
+            letra[4]='s';
             writer.write(username);
+            writer.newLine();
+            writer.flush();
+            writer.write(letra);
             writer.newLine();
             writer.flush();
         }catch (IOException E){
