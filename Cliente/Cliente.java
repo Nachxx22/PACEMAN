@@ -2,7 +2,9 @@ package Cliente;
 
 import java.io.*;
 import java.net.Socket;
-
+import java.net.*;
+import java.io.*;
+import java.lang.*;
 public class Cliente {
     private Socket socket;
     private BufferedReader reader;
@@ -21,19 +23,28 @@ public class Cliente {
     }
     public void sendMessaje(){
         try{
+            //System.out.println("Cliente Java: Enviado " + aux.toString());
             //nota a C le deben de llegar chars , no strings al buffer.
+            DataOutputStream bufferOut = new DataOutputStream(socket.getOutputStream());
+            bufferOut.writeInt(username.length()+1);
+            bufferOut.writeBytes(username);
+            bufferOut.writeByte('\0');
+            /*
             char[] letra = new char[5];
             letra[0]='h';
             letra[1]='o';
             letra[2]='l';
             letra[3]='a';
             letra[4]='s';
-            writer.write(username);
+            writer.write(letra.length+1);
             writer.newLine();
             writer.flush();
             writer.write(letra);
             writer.newLine();
             writer.flush();
+            writer.write('\0');
+            writer.newLine();
+            writer.flush();*/
         }catch (IOException E){
             E.printStackTrace();
             closeEverything(socket,reader,writer);
