@@ -427,7 +427,10 @@ public class Model extends JPanel implements ActionListener {
     public void factory(String mssg){
         if(mssg.startsWith("CreateEnemy")){
             String enemyType = mssg.substring(12);
-            System.out.println("El a crear es:" +enemyType);
+            System.out.println("El enemigo a crear es:" +enemyType);
+            ghost_x[0] = ghost_x[0] + (ghost_dx[0] * ghostSpeed[0]);
+            ghost_y[0] = ghost_y[0] + (ghost_dy[0] * ghostSpeed[0]);
+
             EnemyFactory enemyFactory = new EnemyFactory();
             Enemy enemy = enemyFactory.createEnemy(enemyType);
             // se añade el enemigo a la lista de enemies y se repinta el juego
@@ -437,7 +440,7 @@ public class Model extends JPanel implements ActionListener {
         else if(mssg.startsWith("CreateObject")){
             String objectType = mssg.substring(13);
             ObjectFactory objectFactory = new ObjectFactory();
-            System.out.println("El a crear es:" +objectType);
+            System.out.println("El objeto a crear es:" +objectType);
             Object object = objectFactory.createObject(objectType);
             // se añade el enemigo a la lista de objets y se repinta el juego
             objects.add(object);
