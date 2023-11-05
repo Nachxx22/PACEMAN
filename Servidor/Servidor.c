@@ -2,6 +2,7 @@
 // Created by huevitoentorta on 04/11/23.
 //
 #include "Servidor.h"
+#include "json.h"
 
 /**
  * Inicia el servidor
@@ -90,8 +91,11 @@ int iniciarServidor(){
                     ///Se lee la cadena enviada
                     printf("entre acav3\n");
                     Lee_Socket(socketCliente[i], cadena, longitudCadena);
-                    printf("Cliente %d envia %s\n", i + 1, cadena);
-
+                    leerjson(cadena);
+                    //printf("Cliente %d envia %s\n", i + 1, cadena);
+                    //el cliente solo le envia los datos de creacion
+                    //y el movimiento cuando mueve el juego.
+                    
                     //accion = AccionesServidor(cadena);
 
                     //printf("Accion: %d\n", accion);

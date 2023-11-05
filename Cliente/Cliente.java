@@ -1,21 +1,27 @@
 package Cliente;
+import Cliente.Json.Json;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.*;
 import java.io.*;
 import java.lang.*;
+
 public class Cliente {
     private Socket socket;
     private BufferedReader reader;
     private BufferedWriter writer;
     private String username;
+    private DataOutput bufferOut;
+    private Json json;
     public Cliente(Socket sockete,String usuario){
         try {
             this.socket=sockete;
-            this.reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.bufferOut = new DataOutputStream(socket.getOutputStream());
+            //this.reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            //this.writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.username=usuario;
+            json.getInstance();
         }catch (IOException E){
             E.printStackTrace();
             closeEverything(socket,reader,writer);
@@ -25,9 +31,19 @@ public class Cliente {
         try{
             //System.out.println("Cliente Java: Enviado " + aux.toString());
             //nota a C le deben de llegar chars , no strings al buffer.
-            DataOutputStream bufferOut = new DataOutputStream(socket.getOutputStream());
-            bufferOut.writeInt(username.length()+1);
-            bufferOut.writeBytes(username);
+            String[] tags = new String[4];
+            tags[0]="manzana";
+            tags[1]="posicionx";
+            tags[2]="posiciony";
+            tags[3]="puntaje";
+            int[] valores=new int[4];
+            valores[0]=1;
+            valores[1]=30;
+            valores[2]=50;
+            valores[3]=100;
+            String jsonString = json.getInstance().crearjsonConfigu(tags,valores);
+            bufferOut.writeInt(jsonString.length()+1);
+            bufferOut.writeBytes(jsonString);
             bufferOut.writeByte('\0');
             /*
             char[] letra = new char[5];

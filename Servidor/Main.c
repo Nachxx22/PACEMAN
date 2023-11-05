@@ -86,30 +86,4 @@ int main(){
 }
 
 
-void receiveandprintData(const struct AcceptedSocket *clientSocket) {
-    char buffer[MAX_MESSAGE_LENGTH];
-    while(true){
-        ssize_t bytesReceived = recv(clientSocket->acceptedSocketFD, buffer, MAX_MESSAGE_LENGTH , 0);
-        if(bytesReceived>0){
-            buffer[bytesReceived]=0;
-            printf("response was %s \n",buffer);
-        }
-        if(bytesReceived==0){
-            break;
-        }
-    }
-};
-struct AcceptedSocket *acceptincomingConection(int serverSocket) {
-    struct sockaddr_in clientaddres;
-    int clientAddsize = sizeof(struct sockaddr_in);
-    int clientSocket = accept(serverSocket, (struct sockaddr *) &clientaddres, &clientAddsize);
-    struct AcceptedSocket* acceptedSocket= malloc(sizeof (struct AcceptedSocket));
-    acceptedSocket->address=clientaddres;
-    acceptedSocket->acceptedSocketFD=clientSocket;
-    acceptedSocket->acceptedSuccessfully=clientSocket>0;//esto produce -1 si no
-    //hubo conexion exitosa y produce un error.
-    if(!acceptedSocket->acceptedSuccessfully){
-        acceptedSocket->error = clientSocket;
-    }
-    return acceptedSocket;
-}
+
