@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class PinkyEnemy extends Enemy {
     public PinkyEnemy(Integer x, Integer y) {
-        super(x, y, 1, new ImageIcon("src/images/Pinky.gif").getImage());
+        super(x, y, 6, new ImageIcon("src/images/Pinky.gif").getImage(),0,0);
     }
 
     @Override

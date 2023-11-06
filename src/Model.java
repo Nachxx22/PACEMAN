@@ -32,14 +32,15 @@ public class Model extends JPanel implements ActionListener {
     private Integer scoreupdate=100;
     private Integer[] dx, dy;
     private Integer[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
+    private Integer[] enemy_x, enemy_y, enemy_dx, enemy_dy, enemySpeed;
 
     private Image heart, ghost;
     private Image up, down, left, right;
     private Image cherryIMG,strawberryIMG, orangeIMG, appleIMG, bashfulIMG, speedyIMG, pinkyIMG, shadowIMG;
 
     private Integer pacman_x, pacman_y, pacmand_x, pacmand_y;
-    private Integer req_dx, req_dy;
-    private java.util.List<Enemy> enemies;
+    private  Integer req_dx, req_dy;
+    private List<Enemy> enemies;
     private List<Object> objects;
     private Timer timer;
     private Paceman pacman;
@@ -124,6 +125,11 @@ public class Model extends JPanel implements ActionListener {
         ghost_y = new Integer[MAX_GHOSTS];
         ghost_dy = new Integer[MAX_GHOSTS];
         ghostSpeed = new Integer[MAX_GHOSTS];
+        enemy_x = new Integer[MAX_GHOSTS];
+        enemy_dx = new Integer[MAX_GHOSTS];
+        enemy_y = new Integer[MAX_GHOSTS];
+        enemy_dy = new Integer[MAX_GHOSTS];
+        enemySpeed = new Integer[MAX_GHOSTS];
         dx = new Integer[4];
         dy = new Integer[4];
         
@@ -142,6 +148,7 @@ public class Model extends JPanel implements ActionListener {
             movePacman();
             drawPacman(g2d);
             moveGhosts(g2d);
+            moveEnemys(g2d);
             checkMaze();
         }
     }
@@ -276,6 +283,86 @@ public class Model extends JPanel implements ActionListener {
             }
         }
     }
+    private void moveEnemys(Graphics2D g2d) {
+
+        Integer pos;
+        Integer count;
+
+        for (int i = 0; i < enemies.size(); i++) {
+            if (enemies.get(i).getX() % BLOCK_SIZE == 0 && enemies.get(i).getY() % BLOCK_SIZE == 0) {
+                pos = enemies.get(i).getX() / BLOCK_SIZE + N_BLOCKS * (int) (enemies.get(i).getY() / BLOCK_SIZE);
+
+                count = 0;
+
+                if ((screenData[pos] & 1) == 0 && enemies.get(i).getdX()  != 1) {
+                    dx[count] = -1;
+                    dy[count] = 0;
+                    count++;
+                }
+
+                if ((screenData[pos] & 2) == 0 && enemies.get(i).getdY() != 1) {
+                    dx[count] = 0;
+                    dy[count] = -1;
+                    count++;
+                }
+
+                if ((screenData[pos] & 4) == 0 && enemies.get(i).getdX() != -1) {
+                    dx[count] = 1;
+                    dy[count] = 0;
+                    count++;
+                }
+
+                if ((screenData[pos] & 8) == 0 && enemies.get(i).getdY() != -1) {
+                    dx[count] = 0;
+                    dy[count] = 1;
+                    count++;
+                }
+
+                if (count == 0) {
+
+                    if ((screenData[pos] & 15) == 15) {
+                        //enemy_dx[i] = 0;
+                        enemies.get(i).setdX(0);
+                        enemies.get(i).setdY(0);
+                        //enemy_dy[i] = 0;
+                    } else {
+                       // enemy_dx[i] = -enemy_dx[i];
+                        enemies.get(i).setdX(-(enemies.get(i).getdX()));
+                        enemies.get(i).setdY(-(enemies.get(i).getdY()));
+                        //enemy_dy[i] = -enemy_dy[i];
+                    }
+
+                } else {
+
+                    count = (int) (Math.random() * count);
+
+                    if (count > 3) {
+                        count = 3;
+                    }
+
+                    //enemy_dx[i] = dx[count];
+                    enemies.get(i).setdX(dx[count]);
+                    enemies.get(i).setdY(dy[count]);
+                    //enemy_dy[i] = dy[count];
+                }
+
+            }
+
+            enemy_x[i] = (enemies.get(i).getX())+ ((enemies.get(i).getdX())*(enemies.get(i).getSpeed()));
+            enemy_y[i] = (enemies.get(i).getY()) + ((enemies.get(i).getdY())*(enemies.get(i).getSpeed()));
+            enemies.get(i).setX(enemy_x[i]);
+            enemies.get(i).setY(enemy_y[i]);
+            //drawGhost(g2d,enemy_x[i] + 1, enemy_y[i] + 1);
+            enemies.get(i).draw(g2d,enemies.get(i).getX() + 1, enemies.get(i).getY() + 1);
+
+            if (pacman_x > (enemy_x[i] - 12) && pacman_x < (enemy_x[i] + 12)
+                    && pacman_y > (enemy_y[i] - 12) && pacman_y < (enemy_y[i] + 12)
+                    && inGame) {
+
+                dying = true;
+            }
+        }
+    }
 
     private void drawGhost(Graphics2D g2d, Integer x, Integer y) {
     	g2d.drawImage(ghost, x, y, this);
@@ -391,6 +478,7 @@ public class Model extends JPanel implements ActionListener {
         }
 
         continueLevel();
+        continueLevel2();
     }
 
     private void continueLevel() {
@@ -422,15 +510,42 @@ public class Model extends JPanel implements ActionListener {
         req_dy = 0;
         dying = false;
     }
+    private void continueLevel2() {
+
+        Integer dx = 1;
+        Integer random;
+
+        for (int i = 0; i < enemies.size(); i++) {
+
+            enemy_y[i] = 4 * BLOCK_SIZE; //start position
+            enemy_x[i] = 4 * BLOCK_SIZE;
+            enemy_dy[i] = 0;
+            enemy_dx[i] = dx;
+            dx = -dx;
+
+            System.out.println("cantidad de enemigos: "+ enemies.size());
+            if (enemies.size() != 0){
+                enemySpeed[i] = enemies.get(i).getSpeed();
+            }else{
+                factory("CreateEnemy Shadow");
+                enemySpeed[i]=enemies.get(i).getSpeed();
+            }
+        }
+
+        pacman_x = 7 * BLOCK_SIZE;  //start position
+        pacman_y = 11 * BLOCK_SIZE;
+        pacmand_x = 0;	//reset direction move
+        pacmand_y = 0;
+        req_dx = 0;		// reset direction controls
+        req_dy = 0;
+        dying = false;
+    }
 
     //Se encarga de llamar el factory para crear el Enemy o Object dependiendo del mensaje recibido
     public void factory(String mssg){
         if(mssg.startsWith("CreateEnemy")){
             String enemyType = mssg.substring(12);
             System.out.println("El enemigo a crear es:" +enemyType);
-            ghost_x[0] = ghost_x[0] + (ghost_dx[0] * ghostSpeed[0]);
-            ghost_y[0] = ghost_y[0] + (ghost_dy[0] * ghostSpeed[0]);
-
             EnemyFactory enemyFactory = new EnemyFactory();
             Enemy enemy = enemyFactory.createEnemy(enemyType);
             // se añade el enemigo a la lista de enemies y se repinta el juego
@@ -460,18 +575,6 @@ public class Model extends JPanel implements ActionListener {
 
         drawMaze(g2d);
         drawScore(g2d);
-
-        //Para dibujar a los objetos
-        for (Object object : objects) {
-            object.draw(g);
-            g.drawString("Load and draw " + object.getImageName() + " at (" + object.getX() + ", " + object.getY() + ")", object.getX(), object.getY() - 10);
-        }
-        //para dibujar los enemigos
-        for (Enemy enemy : enemies) {
-            enemy.draw(g);
-            g.drawString("Load and draw " + enemy.getImageName() + " at (" + enemy.getX() + ", " + enemy.getY() + ")", enemy.getX(), enemy.getY() - 10);
-        }
-
 
         if (inGame) {
             playGame(g2d);
@@ -517,7 +620,7 @@ public class Model extends JPanel implements ActionListener {
                     inGame = false;
                 }
                 // Para crear enemigos y objetos con ciertas teclas
-                if (e.getKeyCode() == KeyEvent.VK_1) {
+                else if (e.getKeyCode() == KeyEvent.VK_1) {
                     // Create a Shadow enemy
                     factory("CreateEnemy Shadow");
                 } else if (e.getKeyCode() == KeyEvent.VK_2) {

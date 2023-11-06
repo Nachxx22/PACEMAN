@@ -10,16 +10,18 @@ public abstract class Enemy {
     protected Integer speed;
     protected Image image;
 
-    public Enemy(Integer x, Integer y, Integer speed, Image image) {
+    public Enemy(Integer x, Integer y, Integer speed, Image image,Integer dx, Integer dy) {
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.image = image;
+        this.dx=dx;
+        this.dy=dy;
     }
 
     public abstract void move();
 
-    public void draw(Graphics g) {
+    public void draw(Graphics g,Integer x, Integer y) {
         g.drawImage(image, x, y, null);
     }
 
@@ -29,6 +31,30 @@ public abstract class Enemy {
 
     public Integer getY() {
         return y;
+    }
+
+    public Integer getSpeed() {
+        return speed;
+    }
+    public void  setX(Integer e) {
+        this.x=e;
+    }
+    public void  setY(Integer e) {
+        this.y=e;
+    }
+    public Integer getdX() {
+        return dx;
+    }
+
+    public Integer getdY() {
+        return dy;
+    }
+
+    public void  setdX(Integer e) {
+        this.dx=e;
+    }
+    public void  setdY(Integer e) {
+        this.dy=e;
     }
 
     public String getImageName() {

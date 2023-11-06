@@ -9,7 +9,7 @@ public class EnemyFactory implements AbstractFactory {
     public  Enemy createEnemy(String enemyType) {
         switch (enemyType) {
             case "Shadow":
-                return new ShadowEnemy(8,8);
+                return new ShadowEnemy(0,0);
             case "Speedy":
                 return new SpeedyEnemy(0,0);
             case "Bashful":
