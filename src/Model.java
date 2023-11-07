@@ -705,19 +705,19 @@ public class Model extends JPanel implements ActionListener {
             int key = e.getKeyCode();
 
             if (inGame) {
-                if (key == KeyEvent.VK_LEFT || reader.getXValue() < 440) {
+                if (key == KeyEvent.VK_LEFT || reader.getXValue() < 680) {
                     //Mover pacman hacia la izquierda
                     req_dx = -1;
                     req_dy = 0;
-                } else if (key == KeyEvent.VK_RIGHT || reader.getXValue() > 680) {
+                } else if (key == KeyEvent.VK_RIGHT || reader.getXValue() > 460) {
                     //Mover pacman hacia la derecha
                     req_dx = 1;
                     req_dy = 0;
-                } else if (key == KeyEvent.VK_UP || reader.getYValue() < 440) {
+                } else if (key == KeyEvent.VK_UP || reader.getYValue() < 680) {
                     //Mover pacman hacia arriba
                     req_dx = 0;
                     req_dy = -1;
-                } else if (key == KeyEvent.VK_DOWN || reader.getYValue() > 680) {
+                } else if (key == KeyEvent.VK_DOWN || reader.getYValue() > 460) {
                     //Mover pacman hacia abajo
                     req_dx = 0;
                     req_dy = 1;
