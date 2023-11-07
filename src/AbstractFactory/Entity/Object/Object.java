@@ -6,11 +6,13 @@ public abstract class Object {
     protected Integer x;
     protected Integer y;
     protected Image image;
+    protected Integer score;
 
-    public Object(Integer x, Integer y, Image image) {
+    public Object(Integer x, Integer y, Image image, Integer score) {
         this.x = x;
         this.y = y;
         this.image = image;
+        this.score = score;
     }
 
     public void draw(Graphics g) {
@@ -23,6 +25,10 @@ public abstract class Object {
 
     public Integer getY() {
         return y;
+    }
+
+    public Integer getScore() {
+        return score;
     }
 
     public String getImageName() {

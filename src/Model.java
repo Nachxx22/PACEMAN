@@ -5,6 +5,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -25,6 +26,7 @@ public class Model extends JPanel implements ActionListener {
     private final Integer N_BLOCKS = 15;
     private final Integer SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
     private final Integer MAX_GHOSTS = 12;
+    private final Integer MAX_OBJECTS = 12;
     private final Integer PACMAN_SPEED = 6;
 
     private Integer N_GHOSTS = 6;
@@ -33,10 +35,11 @@ public class Model extends JPanel implements ActionListener {
     private Integer[] dx, dy;
     private Integer[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
     private Integer[] enemy_x, enemy_y, enemy_dx, enemy_dy, enemySpeed;
+    private Integer[] object_x, object_y, object_dx, object_dy, objectSpeed;
 
     private Image heart, ghost;
     private Image up, down, left, right;
-    private Image cherryIMG,strawberryIMG, orangeIMG, appleIMG, bashfulIMG, speedyIMG, pinkyIMG, shadowIMG;
+    private Image cherryIMG,strawberryIMG, pastillaIMG, appleIMG, bashfulIMG, speedyIMG, pinkyIMG, shadowIMG;
 
     private Integer pacman_x, pacman_y, pacmand_x, pacmand_y;
     private  Integer req_dx, req_dy;
@@ -107,7 +110,7 @@ public class Model extends JPanel implements ActionListener {
 
         cherryIMG = new ImageIcon("src/images/cherry.png").getImage();
         strawberryIMG = new ImageIcon("src/images/strawberry.png").getImage();
-        orangeIMG = new ImageIcon("src/images/orange.png").getImage();
+        pastillaIMG = new ImageIcon("src/images/pastilla.png").getImage();
         appleIMG = new ImageIcon("src/images/apple.png").getImage();
 
         bashfulIMG = new ImageIcon("src/images/Bashful.gif").getImage();
@@ -130,6 +133,11 @@ public class Model extends JPanel implements ActionListener {
         enemy_y = new Integer[MAX_GHOSTS];
         enemy_dy = new Integer[MAX_GHOSTS];
         enemySpeed = new Integer[MAX_GHOSTS];
+        object_x = new Integer[MAX_OBJECTS];
+        object_dx = new Integer[MAX_OBJECTS];
+        object_y = new Integer[MAX_OBJECTS];
+        object_dy = new Integer[MAX_OBJECTS];
+        objectSpeed = new Integer[MAX_OBJECTS];
         dx = new Integer[4];
         dy = new Integer[4];
         
@@ -149,6 +157,7 @@ public class Model extends JPanel implements ActionListener {
             drawPacman(g2d);
             moveGhosts(g2d);
             moveEnemys(g2d);
+            CollisionObjects(g2d);
             checkMaze();
         }
     }
@@ -275,6 +284,7 @@ public class Model extends JPanel implements ActionListener {
             ghost_y[i] = ghost_y[i] + (ghost_dy[i] * ghostSpeed[i]);
             drawGhost(g2d, ghost_x[i] + 1, ghost_y[i] + 1);
 
+            //Aqui se maneja las colisiones con los fantasmas
             if (pacman_x > (ghost_x[i] - 12) && pacman_x < (ghost_x[i] + 12)
                     && pacman_y > (ghost_y[i] - 12) && pacman_y < (ghost_y[i] + 12)
                     && inGame) {
@@ -290,7 +300,7 @@ public class Model extends JPanel implements ActionListener {
 
         for (int i = 0; i < enemies.size(); i++) {
             if (enemies.get(i).getX() % BLOCK_SIZE == 0 && enemies.get(i).getY() % BLOCK_SIZE == 0) {
-                pos = enemies.get(i).getX() / BLOCK_SIZE + N_BLOCKS * (int) (enemies.get(i).getY() / BLOCK_SIZE);
+                pos = enemies.get(i).getX() / BLOCK_SIZE + N_BLOCKS * (Integer) (enemies.get(i).getY() / BLOCK_SIZE);
 
                 count = 0;
 
@@ -355,11 +365,100 @@ public class Model extends JPanel implements ActionListener {
             //drawGhost(g2d,enemy_x[i] + 1, enemy_y[i] + 1);
             enemies.get(i).draw(g2d,enemies.get(i).getX() + 1, enemies.get(i).getY() + 1);
 
+            //Para manejar las colisiones del pacman con los enemigos
             if (pacman_x > (enemy_x[i] - 12) && pacman_x < (enemy_x[i] + 12)
                     && pacman_y > (enemy_y[i] - 12) && pacman_y < (enemy_y[i] + 12)
                     && inGame) {
 
+                //mensaje al servidor colision con enemy
+                //mensaje del servidor con la instruccion
                 dying = true;
+            }
+        }
+    }
+    private void CollisionObjects(Graphics2D g2d) {
+
+        Integer pos;
+        Integer count;
+
+        for (int i = 0; i < objects.size(); i++) {
+            if (objects.get(i).getX() % BLOCK_SIZE == 0 && objects.get(i).getY() % BLOCK_SIZE == 0) {
+                pos = objects.get(i).getX() / BLOCK_SIZE + N_BLOCKS * (Integer) (objects.get(i).getY() / BLOCK_SIZE);
+
+                count = 0;
+
+                if ((screenData[pos] & 1) == 0 && enemies.get(i).getdX()  != 1) {
+                    dx[count] = -1;
+                    dy[count] = 0;
+                    count++;
+                }
+
+                if ((screenData[pos] & 2) == 0 && enemies.get(i).getdY() != 1) {
+                    dx[count] = 0;
+                    dy[count] = -1;
+                    count++;
+                }
+
+                if ((screenData[pos] & 4) == 0 && enemies.get(i).getdX() != -1) {
+                    dx[count] = 1;
+                    dy[count] = 0;
+                    count++;
+                }
+
+                if ((screenData[pos] & 8) == 0 && enemies.get(i).getdY() != -1) {
+                    dx[count] = 0;
+                    dy[count] = 1;
+                    count++;
+                }
+
+                if (count == 0) {
+
+                    if ((screenData[pos] & 15) == 15) {
+                        //enemy_dx[i] = 0;
+                        enemies.get(i).setdX(0);
+                        enemies.get(i).setdY(0);
+                        //enemy_dy[i] = 0;
+                    } else {
+                        // enemy_dx[i] = -enemy_dx[i];
+                        enemies.get(i).setdX(-(enemies.get(i).getdX()));
+                        enemies.get(i).setdY(-(enemies.get(i).getdY()));
+                        //enemy_dy[i] = -enemy_dy[i];
+                    }
+
+                } else {
+
+                    count = (int) (Math.random() * count);
+
+                    if (count > 3) {
+                        count = 3;
+                    }
+
+                    //enemy_dx[i] = dx[count];
+                    //enemies.get(i).setdX(dx[count]);
+                    //enemies.get(i).setdY(dy[count]);
+                    //enemy_dy[i] = dy[count];
+                }
+
+            }
+
+            //object_x[i] = (objects.get(i).getX())+ ((objects.get(i).getdX())*(enemies.get(i).getSpeed()));
+            //object_y[i] = (objects.get(i).getY()) + ((objects.get(i).getdY())*(enemies.get(i).getSpeed()));
+            //enemies.get(i).setX(enemy_x[i]);
+            //enemies.get(i).setY(enemy_y[i]);
+            //drawGhost(g2d,enemy_x[i] + 1, enemy_y[i] + 1);
+            //enemies.get(i).draw(g2d,enemies.get(i).getX() + 1, enemies.get(i).getY() + 1);
+
+            //Para manejar las colisiones del pacman con los enemigos
+            if (pacman_x > (objects.get(i).getX() - 12) && pacman_x < (objects.get(i).getX() + 12)
+                    && pacman_y > (objects.get(i).getY() - 12) && pacman_y < ( objects.get(i).getY() + 12)
+                    && inGame) {
+
+                System.out.println("Se suman: "+objects.get(i).getScore()+" Puntos");
+                score+=objects.get(i).getScore();
+                objects.remove(i);
+                //mensaje al servidor colision con enemy
+                //mensaje del servidor con la instruccion
+                //dying = true;
             }
         }
     }
@@ -377,10 +476,14 @@ public class Model extends JPanel implements ActionListener {
             pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y / BLOCK_SIZE);
             ch = screenData[pos];
 
+            //Colisiones con los puntos normales
             if ((ch & 16) != 0) {
                 screenData[pos] = (short) (ch & 15);
                 score+=scoreupdate;
+                //mensaje al servidor colision con punto
+                //mensaje recibido y instruccion
             }
+
 
             if (req_dx != 0 || req_dy != 0) {
                 if (!((req_dx == -1 && req_dy == 0 && (ch & 1) != 0)
@@ -455,6 +558,9 @@ public class Model extends JPanel implements ActionListener {
                     g2d.setColor(new Color(255,255,255));
                     g2d.fillOval(x + 10, y + 10, 6, 6);
                }
+                for (Object object: objects){
+                    object.draw(g2d);
+                }
 
                 i++;
             }
@@ -641,9 +747,9 @@ public class Model extends JPanel implements ActionListener {
                 } else if (e.getKeyCode() == KeyEvent.VK_S) {
                     // Create a Strawberry object
                     factory("CreateObject Strawberry");
-                } else if (e.getKeyCode() == KeyEvent.VK_O) {
+                } else if (e.getKeyCode() == KeyEvent.VK_P) {
                     // Create an Orange object
-                    factory("CreateObject Orange");
+                    factory("CreateObject Pastilla");
                 }
             } else {
                 if (key == KeyEvent.VK_SPACE) {
@@ -680,27 +786,4 @@ public class Model extends JPanel implements ActionListener {
             repaint();
         }
     }
-    /*
-    public void handleMessage(String message) {
-        // Handle messages received from the server
-        if (message.startsWith("CreateEnemy")) {
-            String enemyType = message.substring(12);
-            Enemy enemy = enemyFactory.createEnemy(enemyType);
-            // Add the new enemy to the list and repaint the game board
-            model.getEnemies().add(enemy);
-            model.repaint();
-        } else if (message.startsWith("CreateObject")) {
-            String objectType = message.substring(13);
-            Object object = objectFactory.createObject(objectType);
-            // Add the new object to the list and repaint the game board
-            model.getObjects().add(object);
-            model.repaint();
-        }
-    }
-
-     */
-
-
-
-
 }

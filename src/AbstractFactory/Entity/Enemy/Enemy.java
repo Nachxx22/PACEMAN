@@ -36,6 +36,9 @@ public abstract class Enemy {
     public Integer getSpeed() {
         return speed;
     }
+    public void setSpeed(Integer e) {
+         this.speed=e;
+    }
     public void  setX(Integer e) {
         this.x=e;
     }
