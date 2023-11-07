@@ -5,7 +5,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -26,16 +25,14 @@ public class Model extends JPanel implements ActionListener {
     private final Integer N_BLOCKS = 15;
     private final Integer SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
     private final Integer MAX_GHOSTS = 12;
-    private final Integer MAX_OBJECTS = 12;
     private final Integer PACMAN_SPEED = 6;
 
-    private Integer N_GHOSTS = 6;
+    private Integer N_GHOSTS = 3;
     private Integer lives, score;
     private Integer scoreupdate=100;
     private Integer[] dx, dy;
     private Integer[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
     private Integer[] enemy_x, enemy_y, enemy_dx, enemy_dy, enemySpeed;
-    private Integer[] object_x, object_y, object_dx, object_dy, objectSpeed;
 
     private Image heart, ghost;
     private Image up, down, left, right;
@@ -46,7 +43,6 @@ public class Model extends JPanel implements ActionListener {
     private List<Enemy> enemies;
     private List<Object> objects;
     private Timer timer;
-    private Paceman pacman;
     private AbstractFactory enemyFactory;
     private AbstractFactory objectFactory;
 
@@ -133,11 +129,6 @@ public class Model extends JPanel implements ActionListener {
         enemy_y = new Integer[MAX_GHOSTS];
         enemy_dy = new Integer[MAX_GHOSTS];
         enemySpeed = new Integer[MAX_GHOSTS];
-        object_x = new Integer[MAX_OBJECTS];
-        object_dx = new Integer[MAX_OBJECTS];
-        object_y = new Integer[MAX_OBJECTS];
-        object_dy = new Integer[MAX_OBJECTS];
-        objectSpeed = new Integer[MAX_OBJECTS];
         dx = new Integer[4];
         dy = new Integer[4];
         
@@ -228,7 +219,7 @@ public class Model extends JPanel implements ActionListener {
 
         for (int i = 0; i < N_GHOSTS; i++) {
             if (ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0) {
-                pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE);
+                pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (Integer) (ghost_y[i] / BLOCK_SIZE);
 
                 count = 0;
 
@@ -463,6 +454,10 @@ public class Model extends JPanel implements ActionListener {
         }
     }
 
+    private void HandleMessage(String mssg){
+        //Para manejar los mensajes del servidor recibidos por socket
+    }
+
     private void drawGhost(Graphics2D g2d, Integer x, Integer y) {
     	g2d.drawImage(ghost, x, y, this);
         }
@@ -473,7 +468,7 @@ public class Model extends JPanel implements ActionListener {
         Short ch;
 
         if (pacman_x % BLOCK_SIZE == 0 && pacman_y % BLOCK_SIZE == 0) {
-            pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y / BLOCK_SIZE);
+            pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (Integer) (pacman_y / BLOCK_SIZE);
             ch = screenData[pos];
 
             //Colisiones con los puntos normales
@@ -572,7 +567,7 @@ public class Model extends JPanel implements ActionListener {
     	lives = 3;
         score = 0;
         initLevel();
-        N_GHOSTS = 6;
+        N_GHOSTS = 3;
         currentSpeed = 3;
     }
 
@@ -625,8 +620,12 @@ public class Model extends JPanel implements ActionListener {
 
             enemy_y[i] = 4 * BLOCK_SIZE; //start position
             enemy_x[i] = 4 * BLOCK_SIZE;
+            enemies.get(i).setY(4 * BLOCK_SIZE);
+            enemies.get(i).setX(4 * BLOCK_SIZE);
             enemy_dy[i] = 0;
+            enemies.get(i).setdX(0);
             enemy_dx[i] = dx;
+            enemies.get(i).setdX(dx);
             dx = -dx;
 
             System.out.println("cantidad de enemigos: "+ enemies.size());

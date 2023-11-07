@@ -26,6 +26,12 @@ public abstract class Object {
     public Integer getY() {
         return y;
     }
+    public void setX(Integer e) {
+        this.x=e;
+    }
+    public void setY(Integer e) {
+        this.y=e;
+    }
 
     public Integer getScore() {
         return score;
