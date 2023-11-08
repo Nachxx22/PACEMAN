@@ -16,11 +16,13 @@ public class Cliente {
     private DataInputStream bufferIn;
     private Json json;
     public Cliente(Socket sockete,String usuario){
+        //constructor de la clase
         try {
             this.socket=sockete;
+            //EN el ejemplo se utilizan estos dataimpustream
             this.bufferOut = new DataOutputStream(socket.getOutputStream());
             this.bufferIn =new DataInputStream(socket.getInputStream());
-            this.reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            //this.reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
             //this.writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.username=usuario;
             json.getInstance();
@@ -29,6 +31,8 @@ public class Cliente {
             closeEverything(socket,reader,writer);
         }
     }
+    //metodo para enviar al servidor de C, mediante un
+    //Json
     public void sendMessaje(){
         //este no necesita hilos, ya que se va a llamar cuando
         //sea necesario.
@@ -92,32 +96,30 @@ public class Cliente {
             closeEverything(socket,reader,writer);
         }
     }
+    //metodo en hilos para escuchar del servidor de C
+    //ACA ESTA EL PROBLEMA.
     public void readMessaje(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String messaje;
-                int largoMensaje;
+                String messaje; //donde almacena el mensaje
+                int largoMensaje;//largo del mensaje a leer
                 //byte [] aux = null;
                 while (socket.isConnected()) {
                     try {
                         //Se lee la longitud de la cadena y se le resta 1 para eliminar el \0 de C.
                         largoMensaje = bufferIn.readInt()-1;
-                        System.out.println("se leyo el largo");
-                        System.out.println(largoMensaje);
+                    
                         //Array de bytes auxiliar para la lectura de la cadena.
                         byte [] aux = null;
                         aux = new byte[largoMensaje];
-                        char [] al = new char[largoMensaje];
-                        System.out.println("antes del buffer read");//Se le da la longitud
-                        String a =reader.readLine();
-                        System.out.println(a);
-                        bufferIn.read(aux, 0, largoMensaje);
+                        System.out.println(" flag1 checkeo de flujo");//Se le da la longitud
+
+                        bufferIn.read(aux, 0, largoMensaje);//ACA SE CICLA**
                         //Se leen los bytes
-                        System.out.println("el buffer leyo");
+                        System.out.println("flag 2 checkeo de flujo");
                         messaje= new String (aux);
-                        System.out.println(messaje);
-                        System.out.println("llegue aca");
+                        System.out.println("FLAG 3 CHECKEO DE FLUJO");
                         //Se convierte a String
                         bufferIn.readChar();  //Se lee el \0
                         System.out.println("el mensaje es");
