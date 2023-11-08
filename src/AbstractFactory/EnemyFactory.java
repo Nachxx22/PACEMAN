@@ -1,7 +1,8 @@
-package AbstractFactory;
+package src.AbstractFactory;
 
-import AbstractFactory.Entity.Enemy.*;
-import AbstractFactory.Entity.Object.Object;
+
+import src.AbstractFactory.Entity.Enemy.*;
+import src.AbstractFactory.Entity.Object.Object;
 
 
 public class EnemyFactory implements AbstractFactory {

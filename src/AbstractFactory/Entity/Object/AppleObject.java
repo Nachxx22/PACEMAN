@@ -1,4 +1,4 @@
-package AbstractFactory.Entity.Object;
+package src.AbstractFactory.Entity.Object;
 
 import javax.swing.*;
 

@@ -1,10 +1,13 @@
-package AbstractFactory;
+package src.AbstractFactory;
 
-import AbstractFactory.Entity.Enemy.*;
-import AbstractFactory.Entity.Object.*;
-import AbstractFactory.Entity.Object.Object;
-import AbstractFactory.Entity.Object.PastillaObject;
-import AbstractFactory.Entity.Object.StrawberryObject;
+
+import src.AbstractFactory.Entity.Object.Object;
+import src.AbstractFactory.Entity.Object.PastillaObject;
+import src.AbstractFactory.Entity.Object.StrawberryObject;
+import src.AbstractFactory.Entity.Enemy.*;
+import src.AbstractFactory.Entity.Object.*;
+import src.AbstractFactory.Entity.Enemy.Enemy;
+import src.AbstractFactory.Entity.Object.Object;
 
 import java.util.Random;
 

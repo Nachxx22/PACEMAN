@@ -1,4 +1,4 @@
-package AbstractFactory.Entity.Enemy;
+package src.AbstractFactory.Entity.Enemy;
 import java.awt.*;
 import javax.swing.ImageIcon;
 

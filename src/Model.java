@@ -1,3 +1,5 @@
+package src;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,9 +11,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import AbstractFactory.Entity.Object.Object;
-import AbstractFactory.*;
-import AbstractFactory.Entity.Enemy.*;
+
+import src.AbstractFactory.*;
+import src.AbstractFactory.Entity.Enemy.*;
+import src.AbstractFactory.Entity.Object.Object;
 import src.Controller.JoystickReader;
 
 public class Model extends JPanel implements ActionListener {
@@ -28,6 +31,8 @@ public class Model extends JPanel implements ActionListener {
     private final Integer PACMAN_SPEED = 6;
 
     private Integer N_GHOSTS = 3;
+
+    private Integer powered;
     private Integer lives, score;
     private Integer scoreupdate=100;
     private Integer[] dx, dy;
@@ -78,22 +83,16 @@ public class Model extends JPanel implements ActionListener {
         enemyFactory = new EnemyFactory();
         objectFactory = new ObjectFactory();
         loadImages();
+        // Crear objeto para lector de joystick de Arduino
+        JoystickReader reader = new JoystickReader();
 
-        try {
-            addKeyListener(new TAdapter());
-            // Crear objeto para lector de joystick de Arduino
-            JoystickReader reader = new JoystickReader();
-
-            // Iniciar hilo para leer continuamente los valores del joystick
-            Thread joystickThread = new Thread(reader);
-            joystickThread.start();
-            addKeyListener(new TAdapter2(reader));
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
+        // Iniciar hilo para leer continuamente los valores del joystick
+        Thread joystickThread = new Thread(reader);
+        joystickThread.start();
         initVariables();
+
+        addKeyListener(new TAdapter());
+        addKeyListener(new TAdapter2(reader));
         setFocusable(true);
         setFocusable(true);
         setBackground(Color.black);
@@ -138,6 +137,7 @@ public class Model extends JPanel implements ActionListener {
         enemySpeed = new Integer[MAX_GHOSTS];
         dx = new Integer[4];
         dy = new Integer[4];
+        powered=0;
         
         timer = new Timer(40, this);
         timer.start();
@@ -151,6 +151,7 @@ public class Model extends JPanel implements ActionListener {
 
         } else {
 
+            System.out.println(powered);
             movePacman();
             drawPacman(g2d);
             moveGhosts(g2d);
@@ -287,7 +288,12 @@ public class Model extends JPanel implements ActionListener {
                     && pacman_y > (ghost_y[i] - 12) && pacman_y < (ghost_y[i] + 12)
                     && inGame) {
 
-                dying = true;
+                if(powered==1){
+                    //sumar puntaje, los ghost no son eliminados
+                }else{
+                    dying = true;
+                }
+
             }
         }
     }
@@ -370,7 +376,13 @@ public class Model extends JPanel implements ActionListener {
 
                 //mensaje al servidor colision con enemy
                 //mensaje del servidor con la instruccion
-                dying = true;
+                if(powered==1){
+                    //sumar puntaje, los ghost no son eliminados
+                    powered=0;
+                    enemies.remove(i);
+                }else{
+                    dying = true;
+                }
             }
         }
     }
@@ -455,7 +467,8 @@ public class Model extends JPanel implements ActionListener {
                 //if (objects.get(i). instanceof PastillaObject) {
                 if(objects.get(i).getScore()== 500){
                     System.out.println("Colisionó con pastilla");
-                    Integer powered=1;
+                    score+=objects.get(i).getScore();//Sumar el puntaje del objeto
+                    powered=1;
                 }else{
                     System.out.println("Se suman: "+objects.get(i).getScore()+" Puntos");
                     score+=objects.get(i).getScore();//Sumar el puntaje del objeto
@@ -801,28 +814,25 @@ public class Model extends JPanel implements ActionListener {
 
         @Override
         public void keyPressed(KeyEvent e) {
-
+            int key = e.getKeyCode();
 
             if (inGame) {
-
-                if ( reader.getXValue() < 480 && reader != null) {
+                if ( reader.getXValue() < 480) {
                     //Mover pacman hacia la izquierda
                     req_dx = -1;
                     req_dy = 0;
-                } else if ( reader.getXValue() > 680 && reader != null) {
+                } else if ( reader.getXValue() > 680) {
                     //Mover pacman hacia la derecha
                     req_dx = 1;
                     req_dy = 0;
-                } else if ( reader.getYValue() < 460 && reader != null) {
+                } else if ( reader.getYValue() < 460) {
                     //Mover pacman hacia arriba
                     req_dx = 0;
                     req_dy = -1;
-                } else if ( reader.getYValue() > 680 && reader != null) {
+                } else if ( reader.getYValue() > 680) {
                     //Mover pacman hacia abajo
                     req_dx = 0;
                     req_dy = 1;
-                }else{
-
                 }
             }
         }

@@ -1,6 +1,6 @@
-package AbstractFactory.Entity.Enemy;
+package src.AbstractFactory.Entity.Enemy;
 
-import AbstractFactory.Entity.Enemy.Enemy;
+
 
 import javax.swing.*;
 
