@@ -254,7 +254,7 @@ void* escucharCliente(void *ptr){
                     printf("flag2\n");
                     jsonString = crearJSON(variablesJuego,valoresJuego);
                     //printf("eljsonstring es %s:\n",jsonString);
-                    enviarEstadojuego(jsonString,juego1);//le envia el estado actualizado
+                    enviarEstadojuego(jsonString,data);//le envia el estado actualizado
                     //al cliente
                     //y le pasa el struct de juego donde pasar las varas.
                     //printf("Mensaje enviado %c\n",*jsonString);
@@ -310,14 +310,14 @@ void* enviarCliente(void *ptr){//envio al cliente con imput de usuario.
     }
 }
 void enviarEstadojuego(char* mensaje,void *ptr){
-    struct datatouse* data = (struct datatouse*)ptr;
+    struct datatouse* datas = (struct datatouse*)ptr;
     int longitudmsj= strlen(mensaje);
     printf("largomensaje %d \n",longitudmsj);
-    int longitudmsjRed= htonl(longitudmsj);
+    int longitudmsjRed= htonl(strlen(mensaje));
     printf("el mensaje %s \n",mensaje);
-    for(int i = 0; i < data->numeroClientes; i++) {
-        Escribe_Socket(data->socketCliente[i], (char *)&longitudmsjRed, sizeof(int));
-        Escribe_Socket(data->socketCliente[i], mensaje, longitudmsj);
+    for(int i = 0; i < datas->numeroClientes; i++) {
+        Escribe_Socket(datas->socketCliente[i], (char *)&longitudmsjRed, sizeof(int));
+        Escribe_Socket(datas->socketCliente[i], mensaje, longitudmsj);
         //buffer de 100 por tanto la longitud del buffer es de 100.
     }
     printf("mensaje cliente enviado\n");
