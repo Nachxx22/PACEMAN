@@ -15,5 +15,7 @@ add_executable(PACEMAN Main.c
         socketSV.c
         Servidor.h
         json.c
-        json.h)
+        json.h
+        Logic/gameData.h
+        Logic/gameData.c)
 target_link_libraries(PACEMAN ${CJSON_LIB} Threads::Threads)

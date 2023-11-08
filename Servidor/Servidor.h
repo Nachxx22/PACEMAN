@@ -14,9 +14,11 @@
 #include "socketSV.h"
 #include "Socket.h"
 #include "constantes.h"
+#include "json.h"
 void nuevoCliente(int servidor, int *clientes, int *nClientes);
 void compactaClaves(int * tabla, int *n);
 void* escucharCliente(void *ptr);
 void* enviarCliente(void *ptr);
 extern pthread_mutex_t mutex;
+void enviarEstadojuego(char* mensaje,void *ptr);
 #endif //PACEMAN_SERVIDOR_H

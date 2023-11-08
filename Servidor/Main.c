@@ -22,8 +22,9 @@ int main(){
     pthread_t receive_thread, send_thread;
     pthread_mutex_init(&mutex, NULL);
     //inicializa el mutex para sincronizar el acceso a los usuarios.
-
+    //structs a utilizar:
     struct datatouse* data = (struct datatouse*)malloc(sizeof(struct datatouse));
+    //fin de structs a utilizar
     data->socketServidor = Abre_Socket_Inet (PUERTO);
     if (data->socketServidor == -1){
         printf ("Error al abrir el socket\n");
@@ -35,7 +36,9 @@ int main(){
         pthread_join(receive_thread, NULL);
         pthread_join(send_thread, NULL);
 
-    }
+    }/*
+    free(data);
+    free(juego1);*/
 }
 
 

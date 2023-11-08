@@ -43,15 +43,25 @@ public class Cliente {
             //POR LO QUE LAS TAGS QUE ENVIE DEBEN DE SER BIEN ESPECIFICAS
 
             String[] tags = new String[4];
-            tags[0]="manzana";
-            tags[1]="posicionx";
-            tags[2]="posiciony";
-            tags[3]="puntaje";
+            tags[0]="colision1"; //mande esto para indicar colision con fantasma
+            tags[1]="colision2";//mande esto para indicar colision con
+            //fantasma cuando pacman esta empastillado
+            tags[2]="colision3";//mande esto para indicar cuando
+            //pagman consumio un dot
+            tags[3]="fruta";//mande esto para indicar que pacman
+            //consumio una fruta.
+            //a los strings anteriores hay que pasarles los valores correspondientes
+
             int[] valores=new int[4];
             valores[0]=1;
-            valores[1]=30;
-            valores[2]=50;
+            valores[1]=50;
+            valores[2]=10;
             valores[3]=100;
+            /* este codigo de abajo es para cuando se iba a mandar
+            //las posiciones de los fantasmas y eso, queda pendiente
+            //de implementar.
+             */
+            /*
             String[] tags2 = new String[4];
             tags2[0]="pinky";
             tags2[1]="pinkyx";
@@ -61,43 +71,33 @@ public class Cliente {
             valores3[0]=1;
             valores3[1]=253;
             valores3[2]=250;
-            valores3[3]=3;
+            valores3[3]=3;*/
             //String jsonString = json.getInstance().crearjsonConfigu(tags,valores);
             json.getInstance().addjson(tags,valores);
+            /*
+            este codigo de abajo era para el ejemplo de que el json que s
+            se va a enviar puede quedar almacenado en memoria y si se actualiza
+            //con las mismas tags, solo actualiza los valroes
             json.getInstance().addjson(tags2,valores3);
             valores[0]=1;
             valores[1]=2;
             valores[2]=3;
-            valores[3]=4;
-            json.getInstance().addjson(tags,valores);
+            valores[3]=4;*/
+            //json.getInstance().addjson(tags,valores);
             String jsonString= json.getInstance().getjsonString();
             System.out.println(jsonString);
-            bufferOut.writeInt(jsonString.length()+1);
+            bufferOut.writeInt(jsonString.length()+1);//+1 por el tema
+            //del /0
             bufferOut.writeBytes(jsonString);
             bufferOut.writeByte('\0');
-            /*
-            char[] letra = new char[5];
-            letra[0]='h';
-            letra[1]='o';
-            letra[2]='l';
-            letra[3]='a';
-            letra[4]='s';
-            writer.write(letra.length+1);
-            writer.newLine();
-            writer.flush();
-            writer.write(letra);
-            writer.newLine();
-            writer.flush();
-            writer.write('\0');
-            writer.newLine();
-            writer.flush();*/
         }catch (IOException E){
             E.printStackTrace();
             closeEverything(socket,reader,writer);
         }
     }
-    //metodo en hilos para escuchar del servidor de C
-    //ACA ESTA EL PROBLEMA.
+    //bugfix completado de leer mensajes
+    //queda pendiente el clasificado de mensajes
+    //con otra clase
     public void readMessaje(){
         new Thread(new Runnable() {
             @Override

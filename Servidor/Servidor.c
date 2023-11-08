@@ -2,7 +2,7 @@
 // Created by huevitoentorta on 04/11/23.
 //
 #include "Servidor.h"
-#include "json.h"
+
 #include <unistd.h>
 #include <pthread.h>
 
@@ -174,19 +174,32 @@ void compactaClaves(int *tabla, int *n){
     *n = j;
 };
 void* escucharCliente(void *ptr){
+    //STRUCTS NECESARIOS
     struct datatouse* data = (struct datatouse*)ptr;
+    struct gameData* juego1 = (struct gameData*)malloc(sizeof(struct gameData));
+    juego1->puntaje=0;
+    juego1->vidas=3;
+    //CONSTANTES NECESARIAS
     int buffer;
     int maximo;
     int i;
     int accion;
     char cadena[TAM_BUFFER];
-    //cosas para imput
+    //CONSTANTES PARA ENVIAR AL CLIENTE:
+    //array de chars, esto son las tags que se usa para enviarle al cliente la actualizacion
+    //del estado de juego mediante el json
+    char *variablesJuego[]={"puntaje","vidas"};
+    int valoresJuego[] = { 0, 3};
+    char* jsonString;
+    //cosas para imput de usuario(crear fantasmas).
     int longitudCadena;
+    //COSAS PARA EL MUTEX///
     //para que no se quede escuchando hasta que el cliente mande algo
     fd_set descriptoresLectura;
     struct timeval timeout;
     timeout.tv_sec = 1;  // 1 segundo
     timeout.tv_usec = 0; // 0 microsegundos
+
     //va a esperar mensajes por 1 segundo aproximadamente
     while (1) {
         pthread_mutex_lock(&mutex); //BLOQUEA EL MUTEX
@@ -222,7 +235,7 @@ void* escucharCliente(void *ptr){
         for(i = 0; i < data->numeroClientes; i++) {
 
             if(FD_ISSET (data->socketCliente[i], &descriptoresLectura)) {
-
+                //si hay algo que leer en el socket:
                 if((Lee_Socket(data->socketCliente[i], (char *)&buffer, sizeof(int)) > 0)){
                     printf("entre acav2\n");
 
@@ -232,14 +245,24 @@ void* escucharCliente(void *ptr){
                     ///Se lee la cadena enviada
                     printf("entre acav3\n");
                     Lee_Socket(data->socketCliente[i], cadena, longitudCadena);
-                    leerjson(cadena);
-                    //printf("Cliente %d envia %s\n", i + 1, cadena);
+                    leerjson(cadena,juego1);//le pasa la cadena
+
+                    //luego de que lee el json y actualiza el estado del juego
+                    //debe de enviarle el estado de juego actualizado.
+                    valoresJuego[0]=juego1->puntaje;
+                    valoresJuego[1]=juego1->vidas;
+                    printf("flag2\n");
+                    jsonString = crearJSON(variablesJuego,valoresJuego);
+                    //printf("eljsonstring es %s:\n",jsonString);
+                    enviarEstadojuego(jsonString,juego1);//le envia el estado actualizado
+                    //al cliente
+                    //y le pasa el struct de juego donde pasar las varas.
+                    //printf("Mensaje enviado %c\n",*jsonString);
+                    printf("Mensaje exitoso\n");
+                    free(jsonString); //libera el pointer con el jsonstring;
                     //el cliente solo le envia los datos de creacion
                     //y el movimiento cuando mueve el juego.
 
-                    //accion = AccionesServidor(cadena);
-
-                    //printf("Accion: %d\n", accion);
                 } else{
                     printf("Cliente %d ha cerrado la conexion\n", i+1);
                     data->socketCliente[i] = -1;
@@ -252,7 +275,8 @@ void* escucharCliente(void *ptr){
 
     }
 }
-void* enviarCliente(void *ptr){
+void* enviarCliente(void *ptr){//envio al cliente con imput de usuario.
+    //esta funcion es para crear los fantasmas, las frutas, etc
     struct datatouse* data = (struct datatouse*)ptr;
     int i;
     //cosas para imput
@@ -279,9 +303,22 @@ void* enviarCliente(void *ptr){
             Escribe_Socket(data->socketCliente[i], (char *)&mensaje, longitudv2);
             //buffer de 100 por tanto la longitud del buffer es de 100.
         }
-        printf("sali del ciclo ");
+        printf("sali del ciclo \n");
         pthread_mutex_unlock(&mutex);//LIBERA EL MUTEX
         int c;
         while ((c = getchar()) != '\n' && c != EOF);
     }
+}
+void enviarEstadojuego(char* mensaje,void *ptr){
+    struct datatouse* data = (struct datatouse*)ptr;
+    int longitudmsj= strlen(mensaje);
+    printf("largomensaje %d \n",longitudmsj);
+    int longitudmsjRed= htonl(longitudmsj);
+    printf("el mensaje %s \n",mensaje);
+    for(int i = 0; i < data->numeroClientes; i++) {
+        Escribe_Socket(data->socketCliente[i], (char *)&longitudmsjRed, sizeof(int));
+        Escribe_Socket(data->socketCliente[i], mensaje, longitudmsj);
+        //buffer de 100 por tanto la longitud del buffer es de 100.
+    }
+    printf("mensaje cliente enviado\n");
 }
