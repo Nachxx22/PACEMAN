@@ -108,7 +108,7 @@ public class Cliente {
                 while (socket.isConnected()) {
                     try {
                         //Se lee la longitud de la cadena y se le resta 1 para eliminar el \0 de C.
-                        largoMensaje = bufferIn.readInt()-1;
+                        largoMensaje = bufferIn.readInt();
                     
                         //Array de bytes auxiliar para la lectura de la cadena.
                         byte [] aux = null;
@@ -121,7 +121,7 @@ public class Cliente {
                         messaje= new String (aux);
                         System.out.println("FLAG 3 CHECKEO DE FLUJO");
                         //Se convierte a String
-                        bufferIn.readChar();  //Se lee el \0
+                        //bufferIn.readChar();  //Se lee el \0
                         System.out.println("el mensaje es");
                         System.out.println(messaje);
                     } catch (IOException e) {

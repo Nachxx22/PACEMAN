@@ -258,7 +258,7 @@ void* enviarCliente(void *ptr){
     //cosas para imput
     char mensaje[100]; //para leer mensajes de imput.
     char v2[5];
-
+    int longitudv2;
     int longitudMensaje;
     while(1){
 
@@ -272,10 +272,11 @@ void* enviarCliente(void *ptr){
         printf("el mensaje %s \n",mensaje);
         // Limpiar el búfer de entrada
         pthread_mutex_lock(&mutex);//BLOQUEA EL MUTEX
-        longitudMensaje = htonl(strlen(mensaje)+1);
+        longitudv2 =strlen(mensaje);
+        longitudMensaje = htonl(strlen(mensaje));
         for(i = 0; i < data->numeroClientes; i++) {
             Escribe_Socket(data->socketCliente[i], (char *)&longitudMensaje, sizeof(int));
-            Escribe_Socket(data->socketCliente[i], mensaje, longitudMensaje);
+            Escribe_Socket(data->socketCliente[i], (char *)&mensaje, longitudv2);
             //buffer de 100 por tanto la longitud del buffer es de 100.
         }
         printf("sali del ciclo ");
