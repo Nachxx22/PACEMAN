@@ -76,6 +76,7 @@ public class JoystickReader implements Runnable {
         } else {
             // Print x and y values
             System.out.println("No se pudo abrir el puerto COM.");
+            return;
         }
     }
 
