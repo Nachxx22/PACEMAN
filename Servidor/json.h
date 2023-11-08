@@ -12,4 +12,6 @@
 #include <string.h>
 void leerjson(char *Datos);
 void procesarjson(cJSON *json);
+char *crearJSON(char *tag, int valor); //codigo para pasarle mensajes individuales
+
 #endif //PACEMAN_JSON_H

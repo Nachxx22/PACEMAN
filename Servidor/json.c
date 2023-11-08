@@ -24,3 +24,18 @@ void procesarjson(cJSON *json){
         }
     }
 }
+char *crearJSON(char *tag, int valor) {
+    // Crear un objeto JSON
+    cJSON *root = cJSON_CreateObject();
+
+    // Agregar la etiqueta y el valor al objeto JSON
+    cJSON_AddNumberToObject(root, tag, valor);
+
+    // Convertir el objeto JSON en una cadena JSON
+    char *jsonString = cJSON_Print(root);
+
+    // Liberar la memoria del objeto JSON
+    cJSON_Delete(root);
+
+    return jsonString;
+}

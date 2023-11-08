@@ -11,12 +11,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
-
-
 #include "socketSV.h"
 #include "Socket.h"
 #include "constantes.h"
 void nuevoCliente(int servidor, int *clientes, int *nClientes);
-int iniciarServidor();
 void compactaClaves(int * tabla, int *n);
+void* escucharCliente(void *ptr);
+void* enviarCliente(void *ptr);
+extern pthread_mutex_t mutex;
 #endif //PACEMAN_SERVIDOR_H

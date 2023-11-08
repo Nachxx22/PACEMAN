@@ -92,6 +92,7 @@ int Escribe_Socket (int fd, char *Datos, int Longitud)
         Aux = write (fd, Datos + Escrito, Longitud - Escrito);
         if (Aux > 0)
         {
+
             /*
             * Si hemos conseguido escribir caracteres, se actualiza la
             * variable Escrito
