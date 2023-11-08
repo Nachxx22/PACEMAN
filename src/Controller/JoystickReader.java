@@ -40,7 +40,7 @@ public class JoystickReader implements Runnable {
         // Find the desired serial port
         for (SerialPort p : ports) {
             if (p.getSystemPortName().equals("COM3")) {
-                System.out.println("Puerto linux COM3");
+                System.out.println("Puerto windows COM3");
                 port = p;
                 break;
             }

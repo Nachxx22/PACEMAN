@@ -450,13 +450,23 @@ public class Model extends JPanel implements ActionListener {
             if (pacman_x > (objects.get(i).getX() - 12) && pacman_x < (objects.get(i).getX() + 12)
                     && pacman_y > (objects.get(i).getY() - 12) && pacman_y < ( objects.get(i).getY() + 12)
                     && inGame) {
+                System.out.println(objects.get(i));
 
-                System.out.println("Se suman: "+objects.get(i).getScore()+" Puntos");
-                score+=objects.get(i).getScore();
+                //if (objects.get(i). instanceof PastillaObject) {
+                if(objects.get(i).getScore()== 500){
+                    System.out.println("Colisionó con pastilla");
+                    Integer powered=1;
+                }else{
+                    System.out.println("Se suman: "+objects.get(i).getScore()+" Puntos");
+                    score+=objects.get(i).getScore();//Sumar el puntaje del objeto
+
+                    //Eliminar el objeto
+                    //mensaje al servidor colision con enemy
+                    //mensaje del servidor con la instruccion
+                    //dying = true;
+
+                }
                 objects.remove(i);
-                //mensaje al servidor colision con enemy
-                //mensaje del servidor con la instruccion
-                //dying = true;
             }
         }
     }
