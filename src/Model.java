@@ -34,6 +34,7 @@ public class Model extends JPanel implements ActionListener {
     private Integer[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
     private Integer[] enemy_x, enemy_y, enemy_dx, enemy_dy, enemySpeed;
 
+    private JoystickReader reader;
     private Image heart, ghost;
     private Image up, down, left, right;
     private Image cherryIMG,strawberryIMG, pastillaIMG, appleIMG, bashfulIMG, speedyIMG, pinkyIMG, shadowIMG;
@@ -77,16 +78,22 @@ public class Model extends JPanel implements ActionListener {
         enemyFactory = new EnemyFactory();
         objectFactory = new ObjectFactory();
         loadImages();
+
+        try {
+            addKeyListener(new TAdapter());
+            // Crear objeto para lector de joystick de Arduino
+            JoystickReader reader = new JoystickReader();
+
+            // Iniciar hilo para leer continuamente los valores del joystick
+            Thread joystickThread = new Thread(reader);
+            joystickThread.start();
+            addKeyListener(new TAdapter2(reader));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         initVariables();
-
-        // Crear objeto para lector de joystick de Arduino
-        JoystickReader reader = new JoystickReader();
-
-        // Iniciar hilo para leer continuamente los valores del joystick
-        Thread joystickThread = new Thread(reader);
-        joystickThread.start();
-
-        addKeyListener(new TAdapter(reader));
         setFocusable(true);
         setFocusable(true);
         setBackground(Color.black);
@@ -453,6 +460,30 @@ public class Model extends JPanel implements ActionListener {
             }
         }
     }
+    /*
+    private void ControllerMoves(JoystickReader reader) {
+        if (inGame) {
+            if (reader.getXValue() < 480) {
+                //Mover pacman hacia la izquierda
+                req_dx = -1;
+                req_dy = 0;
+            } else if (reader.getXValue() > 680) {
+                //Mover pacman hacia la derecha
+                req_dx = 1;
+                req_dy = 0;
+            } else if (reader.getYValue() < 460) {
+                //Mover pacman hacia arriba
+                req_dx = 0;
+                req_dy = -1;
+            } else if (reader.getYValue() > 680) {
+                //Mover pacman hacia abajo
+                req_dx = 0;
+                req_dy = 1;
+            }
+        }
+    }
+
+     */
 
     private void HandleMessage(String mssg){
         //Para manejar los mensajes del servidor recibidos por socket
@@ -693,32 +724,25 @@ public class Model extends JPanel implements ActionListener {
 
 
     // Controlador de eventos de teclado
+    //controls
     class TAdapter extends KeyAdapter {
-        private JoystickReader reader;
-
-        public TAdapter(JoystickReader reader) {
-            this.reader = reader;
-        }
 
         @Override
         public void keyPressed(KeyEvent e) {
+
             int key = e.getKeyCode();
 
             if (inGame) {
-                if (key == KeyEvent.VK_LEFT || reader.getXValue() < 480) {
-                    //Mover pacman hacia la izquierda
+                if (key == KeyEvent.VK_LEFT) {
                     req_dx = -1;
                     req_dy = 0;
-                } else if (key == KeyEvent.VK_RIGHT || reader.getXValue() > 680) {
-                    //Mover pacman hacia la derecha
+                } else if (key == KeyEvent.VK_RIGHT) {
                     req_dx = 1;
                     req_dy = 0;
-                } else if (key == KeyEvent.VK_UP || reader.getYValue() < 460) {
-                    //Mover pacman hacia arriba
+                } else if (key == KeyEvent.VK_UP) {
                     req_dx = 0;
                     req_dy = -1;
-                } else if (key == KeyEvent.VK_DOWN || reader.getYValue() > 680) {
-                    //Mover pacman hacia abajo
+                } else if (key == KeyEvent.VK_DOWN) {
                     req_dx = 0;
                     req_dy = 1;
                 } else if (key == KeyEvent.VK_ESCAPE && timer.isRunning()) {
@@ -758,31 +782,46 @@ public class Model extends JPanel implements ActionListener {
             }
         }
     }
+    class TAdapter2 extends KeyAdapter {
+        private JoystickReader reader;
+
+        public TAdapter2(JoystickReader reader) {
+            this.reader = reader;
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
 
 
+            if (inGame) {
 
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == timer) {
-            // Move enemies and check for collisions
-            for (Enemy enemy : enemies) {
-                enemy.move();
+                if ( reader.getXValue() < 480 && reader != null) {
+                    //Mover pacman hacia la izquierda
+                    req_dx = -1;
+                    req_dy = 0;
+                } else if ( reader.getXValue() > 680 && reader != null) {
+                    //Mover pacman hacia la derecha
+                    req_dx = 1;
+                    req_dy = 0;
+                } else if ( reader.getYValue() < 460 && reader != null) {
+                    //Mover pacman hacia arriba
+                    req_dx = 0;
+                    req_dy = -1;
+                } else if ( reader.getYValue() > 680 && reader != null) {
+                    //Mover pacman hacia abajo
+                    req_dx = 0;
+                    req_dy = 1;
+                }else{
+
+                }
             }
-            // Repaint the game board
-            repaint();
-        } else if (e.getActionCommand().startsWith("CreateEnemy")) {
-            String enemyType = e.getActionCommand().substring(11);
-            EnemyFactory enemyFactory = new EnemyFactory();
-            Enemy enemy = enemyFactory.createEnemy(enemyType);
-            // Add the new enemy to the list and repaint the game board
-            enemies.add(enemy);
-            repaint();
-        } else if (e.getActionCommand().startsWith("CreateObject")) {
-            String objectType = e.getActionCommand().substring(12);
-            ObjectFactory objectFactory = new ObjectFactory();
-            Object object = objectFactory.createObject(objectType);
-            // Add the new object to the list and repaint the game board
-            objects.add(object);
-            repaint();
         }
     }
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        repaint();
+    }
+
 }
