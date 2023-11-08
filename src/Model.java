@@ -10,9 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import AbstractFactory.Entity.Object.Object;
-import Controller.*;
 import AbstractFactory.*;
 import AbstractFactory.Entity.Enemy.*;
+import src.Controller.JoystickReader;
 
 public class Model extends JPanel implements ActionListener {
 

@@ -1,8 +1,7 @@
-package Controller;
+package src.Controller;
 import com.fazecast.jSerialComm.SerialPort;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.sql.SQLOutput;
 
 /**
  * This class is used to read joystick values from a serial port.
@@ -41,9 +40,13 @@ public class JoystickReader implements Runnable {
         // Find the desired serial port
         for (SerialPort p : ports) {
             if (p.getSystemPortName().equals("COM3")) {
+                System.out.println("Puerto linux COM3");
                 port = p;
-                System.out.println(port);
-                System.out.println(p);
+                break;
+            }
+            if (p.getSystemPortName().equals("ttyUSB0")) {
+                System.out.println("Puerto linux ttyUSB0");
+                port = p;
                 break;
             }
         }
@@ -68,7 +71,7 @@ public class JoystickReader implements Runnable {
                     String[] values = inputLine.split(",");
                     xValue = Integer.parseInt(values[0]);
                     yValue = Integer.parseInt(values[1]);
-                    System.out.println("X: " + xValue + ", Y: " + yValue); //para mostrar en consola los datos del joystick
+                    //System.out.println("X: " + xValue + ", Y: " + yValue); //para mostrar en consola los datos del joystick
                 } catch (Exception e) {
                     System.err.println(e.toString());
                 }
