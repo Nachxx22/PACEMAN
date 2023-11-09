@@ -70,7 +70,7 @@ public class Cliente {
             valores3[2]=250;
             valores3[3]=3;*/
             //String jsonString = json.getInstance().crearjsonConfigu(tags,valores);
-            json.getInstance().addjson(tags,valores);
+            //json.getInstance().addjson(tags,valores);
             /*
             este codigo de abajo era para el ejemplo de que el json que s
             se va a enviar puede quedar almacenado en memoria y si se actualiza
@@ -81,7 +81,7 @@ public class Cliente {
             valores[2]=3;
             valores[3]=4;*/
             //json.getInstance().addjson(tags,valores);
-            String jsonString= json.getInstance().getjsonString();
+            String jsonString= json.getInstance().crearjsonConfigu(tags,valores);
             System.out.println(jsonString);
             bufferOut.writeInt(jsonString.length()+1);//+1 por el tema
             //del /0
