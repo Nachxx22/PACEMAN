@@ -99,7 +99,7 @@ public class Model extends JPanel implements ActionListener {
         joystickThread.start();
         initVariables();
 
-        Socket socket = new Socket("localhost",8884);
+        Socket socket = new Socket("localhost",9999);
         clientes = new Cliente(socket , "luis");
         clientes.readMessaje();
 
@@ -401,7 +401,15 @@ public class Model extends JPanel implements ActionListener {
                     //sumar puntaje, los ghost no son eliminados
                     powered=0;
                     enemies.remove(i);
+                    tags[0]="colision2";
+                    valores[0]=100;
+                    clientes.sendMessage(tags,valores);
                 }else{
+                    //PARA INDICARLE AL SERVIDOR QUE HUBO UNA
+                    //COLISION.
+                    tags[0]="colision1";
+                    valores[0]=1;
+                    clientes.sendMessage(tags,valores);
                     dying = true;
                 }
             }
@@ -479,7 +487,7 @@ public class Model extends JPanel implements ActionListener {
             //drawGhost(g2d,enemy_x[i] + 1, enemy_y[i] + 1);
             //enemies.get(i).draw(g2d,enemies.get(i).getX() + 1, enemies.get(i).getY() + 1);
 
-            //Para manejar las colisiones del pacman con los enemigos
+            //Para manejar las colisiones del pacman con los objetos
             if (pacman_x > (objects.get(i).getX() - 12) && pacman_x < (objects.get(i).getX() + 12)
                     && pacman_y > (objects.get(i).getY() - 12) && pacman_y < ( objects.get(i).getY() + 12)
                     && inGame) {

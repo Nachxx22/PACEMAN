@@ -15,7 +15,7 @@ public class Json { //clase singleton del manejo de los json
     }
     //Para el codigo de abajo, el string tags y el string configuraciones
     //debe de ser del mismo tamaño
-    public String crearjsonConfigu(String[] tags,int[] configuraciones){
+    public String crearjsonConfigu(String[] tags,Integer[] configuraciones){
         int tamaño= configuraciones.length;
         JSONObject jsonObject = new JSONObject();
         for(int i=0;i<tamaño;i++){
