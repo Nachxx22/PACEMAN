@@ -6,7 +6,8 @@ import java.io.IOException;
 public class Paceman extends JFrame{
 
 	public Paceman() throws IOException {
-		add(new Model());
+		//add(new Model());
+		add(Model.getInstance());
 	}
 	
 	

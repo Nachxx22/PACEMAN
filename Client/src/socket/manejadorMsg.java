@@ -2,6 +2,8 @@ package Client.src.socket;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import static Client.src.Model.modelptr;
+
 public class manejadorMsg {
     private JSONParser parser;
     public manejadorMsg(){
@@ -51,19 +53,19 @@ public class manejadorMsg {
         if (command.contains("CreateEnemy")) {
             if(command.contains("Shadow")){
                 System.out.println("Se crea Shadow");
-                //factory("CreateEnemyShadow");
+                modelptr.factory("CreateEnemy Shadow");
             }
             else if(command.contains("Speedy")){
                 System.out.println("Se crea Speedy");
-                //factory("CreateEnemySpeedy");
+                modelptr.factory("CreateEnemy Speedy");
             }
             else if(command.contains("Bashful")){
                 System.out.println("Se crea Bashful");
-                //factory("CreateEnemyBashful");
+                modelptr.factory("CreateEnemy Bashful");
             }
             else if(command.contains("Pokey")){
                 System.out.println("Se crea Pokey");
-                //factory("CreateEnemyPokey");
+                modelptr.factory("CreateEnemy Pokey");
             }
             else{
                 System.out.println("Error");
@@ -74,19 +76,19 @@ public class manejadorMsg {
         else if (command.contains("CreateObject")) {
             if(command.contains("Apple")){
                 System.out.println("Se crea Apple");
-                //factory("CreateObjectApple");
+                modelptr.factory("CreateObject Apple");
             }
             else if(command.contains("Cherry")){
                 System.out.println("Se crea Cherry");
-                //factory("CreateObjectCherry");
+                modelptr.factory("CreateObject Cherry");
             }
             else if(command.contains("Strawberry")){
                 System.out.println("Se crea Strawberry");
-                //factory("CreateObjectStrawberry");
+                modelptr.factory("CreateObject Strawberry");
             }
             else if(command.contains("Pastilla")){
                 System.out.println("Se crea Pastilla");
-                //factory("CreateObjectPastilla");
+                modelptr.factory("CreateObject Pastilla");
             }
             else{
                 System.out.println("Error");
