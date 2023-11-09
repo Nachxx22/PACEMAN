@@ -99,7 +99,7 @@ public class Model extends JPanel implements ActionListener {
         joystickThread.start();
         initVariables();
 
-        Socket socket = new Socket("localhost",9999);
+        Socket socket = new Socket("localhost",8884);
         clientes = new Cliente(socket , "luis");
         clientes.readMessaje();
 
@@ -304,6 +304,7 @@ public class Model extends JPanel implements ActionListener {
                     && inGame) {
 
                 if(powered==1){
+                    powered=0;
                     tags[0]="colision2";
                     valores[0]=100;
                     clientes.sendMessage(tags,valores);
@@ -497,10 +498,16 @@ public class Model extends JPanel implements ActionListener {
                 if(objects.get(i).getScore()== 500){
                     System.out.println("Colisionó con pastilla");
                     score+=objects.get(i).getScore();//Sumar el puntaje del objeto
+                    tags[0]="colision4";
+                    valores[0]=objects.get(i).getScore();
+                    clientes.sendMessage(tags,valores);
                     powered=1;
                 }else{
                     System.out.println("Se suman: "+objects.get(i).getScore()+" Puntos");
                     score+=objects.get(i).getScore();//Sumar el puntaje del objeto
+                    tags[0]="colision3";
+                    valores[0]=objects.get(i).getScore();
+                    clientes.sendMessage(tags,valores);
 
                     //Eliminar el objeto
                     //mensaje al servidor colision con enemy
