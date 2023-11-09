@@ -19,6 +19,7 @@ import Client.src.AbstractFactory.Entity.Enemy.*;
 import Client.src.AbstractFactory.Entity.Object.Object;
 import Client.src.Controller.JoystickReader;
 import Client.src.socket.Cliente;
+import Client.src.socket.Json;
 
 public class Model extends JPanel implements ActionListener {
 
@@ -83,6 +84,13 @@ public class Model extends JPanel implements ActionListener {
 
     private Integer currentSpeed = 3;
     private Short[] screenData;
+    static public Model modelptr = null;
+    static public Model getInstance() throws IOException {
+        if (modelptr == null) {
+            modelptr = new Model();
+        }
+        return modelptr;
+    }
 
     public Model() throws IOException {
         // Initialize the game board and objects
