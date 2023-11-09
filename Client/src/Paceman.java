@@ -1,15 +1,16 @@
-package src;
+package Client.src;
 
 import javax.swing.JFrame;
+import java.io.IOException;
 
 public class Paceman extends JFrame{
 
-	public Paceman() {
+	public Paceman() throws IOException {
 		add(new Model());
 	}
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Paceman pac = new Paceman();
 		pac.setVisible(true);
 		pac.setTitle("Pacman");

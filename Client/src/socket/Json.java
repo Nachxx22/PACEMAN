@@ -1,8 +1,7 @@
-package src.socket;
+package Client.src.socket;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+
 public class Json { //clase singleton del manejo de los json
     private JSONObject objeto = new JSONObject();//pruebas
     static public Json jmanager = null;
@@ -36,7 +35,7 @@ public class Json { //clase singleton del manejo de los json
     //si la colision es 1 , es colision con fruta, entonces que desaparezca esa
     //fruta en la posicion X,Y y sume puntaje , si es una colision con enemigo
     //que coloque a pacman en otro punto de spawneo
-    public void addjson(String[] tags,int[] configuraciones){
+    public void addjson(String[] tags, Integer[] configuraciones){
         int tamaño= configuraciones.length;
         for(int i=0;i<tamaño;i++){
             objeto.put(tags[i],configuraciones[i]);

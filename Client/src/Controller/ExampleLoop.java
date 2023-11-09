@@ -1,4 +1,4 @@
-package src.Controller;
+package Client.src.Controller;
 public class ExampleLoop {
     public static void main(String[] args) throws Exception {
 

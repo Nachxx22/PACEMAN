@@ -1,21 +1,24 @@
-package src;
+package Client.src;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.io.IOException;
 
 
-import src.AbstractFactory.*;
-import src.AbstractFactory.Entity.Enemy.*;
-import src.AbstractFactory.Entity.Object.Object;
-import src.Controller.JoystickReader;
+import Client.src.AbstractFactory.*;
+import Client.src.AbstractFactory.Entity.Enemy.*;
+import Client.src.AbstractFactory.Entity.Object.Object;
+import Client.src.Controller.JoystickReader;
+import Client.src.socket.Cliente;
 
 public class Model extends JPanel implements ActionListener {
 
@@ -49,6 +52,11 @@ public class Model extends JPanel implements ActionListener {
     private List<Enemy> enemies;
     private List<Object> objects;
     private Timer timer;
+
+    private Cliente clientes;
+
+    private String[] tags;
+    private Integer[] valores;
     private AbstractFactory enemyFactory;
     private AbstractFactory objectFactory;
 
@@ -76,7 +84,7 @@ public class Model extends JPanel implements ActionListener {
     private Integer currentSpeed = 3;
     private Short[] screenData;
 
-    public Model() {
+    public Model() throws IOException {
         // Initialize the game board and objects
         enemies = new ArrayList<>();
         objects = new ArrayList<>();
@@ -91,6 +99,11 @@ public class Model extends JPanel implements ActionListener {
         joystickThread.start();
         initVariables();
 
+        Socket socket = new Socket("localhost",8884);
+        clientes = new Cliente(socket , "luis");
+        clientes.readMessaje();
+
+
         addKeyListener(new TAdapter());
         addKeyListener(new TAdapter2(reader));
         setFocusable(true);
@@ -103,22 +116,22 @@ public class Model extends JPanel implements ActionListener {
     
     
     private void loadImages() {
-    	down = new ImageIcon("src/images/down.gif").getImage();
-    	up = new ImageIcon("src/images/down.gif").getImage();
-    	left = new ImageIcon("src/images/left.gif").getImage();
-    	right = new ImageIcon("src/images/right.gif").getImage();
-        ghost = new ImageIcon("src/images/ghost.gif").getImage();
-        heart = new ImageIcon("src/images/heart.png").getImage();
+    	down = new ImageIcon("Client/src/images/down.gif").getImage();
+    	up = new ImageIcon("Client/src/images/down.gif").getImage();
+    	left = new ImageIcon("Client/src/images/left.gif").getImage();
+    	right = new ImageIcon("Client/src/images/right.gif").getImage();
+        ghost = new ImageIcon("Client/src/images/ghost.gif").getImage();
+        heart = new ImageIcon("Client/src/images/heart.png").getImage();
 
-        cherryIMG = new ImageIcon("src/images/cherry.png").getImage();
-        strawberryIMG = new ImageIcon("src/images/strawberry.png").getImage();
-        pastillaIMG = new ImageIcon("src/images/pastilla.png").getImage();
-        appleIMG = new ImageIcon("src/images/apple.png").getImage();
+        cherryIMG = new ImageIcon("Client/src/images/cherry.png").getImage();
+        strawberryIMG = new ImageIcon("Client/rc/images/strawberry.png").getImage();
+        pastillaIMG = new ImageIcon("Client/src/images/pastilla.png").getImage();
+        appleIMG = new ImageIcon("Client/src/images/apple.png").getImage();
 
-        bashfulIMG = new ImageIcon("src/images/Bashful.gif").getImage();
-        speedyIMG = new ImageIcon("src/images/Speedy.gif").getImage();
-        pinkyIMG = new ImageIcon("src/images/Pinky.gif").getImage();
-        shadowIMG = new ImageIcon("src/images/Shadow.gif").getImage();
+        bashfulIMG = new ImageIcon("Client/src/images/Bashful.gif").getImage();
+        speedyIMG = new ImageIcon("Client/src/images/Speedy.gif").getImage();
+        pinkyIMG = new ImageIcon("Client/src/images/Pinky.gif").getImage();
+        shadowIMG = new ImageIcon("Client/src/images/Shadow.gif").getImage();
 
     }
        private void initVariables() {
@@ -135,6 +148,8 @@ public class Model extends JPanel implements ActionListener {
         enemy_y = new Integer[MAX_GHOSTS];
         enemy_dy = new Integer[MAX_GHOSTS];
         enemySpeed = new Integer[MAX_GHOSTS];
+        tags= new String[5];
+        valores=new Integer[5];
         dx = new Integer[4];
         dy = new Integer[4];
         powered=0;
@@ -151,7 +166,7 @@ public class Model extends JPanel implements ActionListener {
 
         } else {
 
-            System.out.println(powered);
+            //System.out.println(powered);
             movePacman();
             drawPacman(g2d);
             moveGhosts(g2d);
@@ -173,7 +188,7 @@ public class Model extends JPanel implements ActionListener {
         g.setColor(new Color(5, 181, 79));
         String s = "Score: " + score;
         g.drawString(s, SCREEN_SIZE / 2 + 96, SCREEN_SIZE + 16);
-        if(score%10000==0 && score !=0){lives++;score+=scoreupdate;}
+        if(score%10000==0 && score !=0){lives++;score+=scoreupdate;} //importante cambiar esto con lo del servidor
         for (int i = 0; i < lives; i++) {
             g.drawImage(heart, i * 28 + 8, SCREEN_SIZE + 1, this);
         }
@@ -289,8 +304,14 @@ public class Model extends JPanel implements ActionListener {
                     && inGame) {
 
                 if(powered==1){
+                    tags[0]="colision2";
+                    valores[0]=100;
+                    clientes.sendMessage(tags,valores);
                     //sumar puntaje, los ghost no son eliminados
                 }else{
+                    tags[0]="colision1";
+                    valores[0]=1;
+                    clientes.sendMessage(tags,valores);
                     dying = true;
                 }
 
@@ -529,6 +550,9 @@ public class Model extends JPanel implements ActionListener {
             if ((ch & 16) != 0) {
                 screenData[pos] = (short) (ch & 15);
                 score+=scoreupdate;
+                tags[0]="colision3";
+                valores[0]=scoreupdate;
+                clientes.sendMessage(tags,valores);
                 //mensaje al servidor colision con punto
                 //mensaje recibido y instruccion
             }
