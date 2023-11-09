@@ -124,6 +124,7 @@ public class Cliente {
                         //bufferIn.readChar();  //Se lee el \0
                         System.out.println("el mensaje es");
                         System.out.println(messaje);
+                        manejadorMsg.commands(messaje);
                     } catch (IOException e) {
                         e.printStackTrace();
                         closeEverything(socket,reader,writer);
