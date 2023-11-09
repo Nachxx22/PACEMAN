@@ -1,7 +1,49 @@
 package Client.src.socket;
-
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 public class manejadorMsg {
-    public static void commands(String command){
+    private JSONParser parser;
+    public manejadorMsg(){
+        parser = new JSONParser();
+
+    }
+    public void procesarJson(String jsonString){
+        try {
+            // Parse el JSON en un objeto JSONObject
+            Object obj = parser.parse(jsonString);
+            JSONObject jsonObject = (JSONObject) obj;
+
+            // Esto va a iterar a cada etiqueta y obtiene su valor
+            //la idea con esto es dejarlo pseudo implementado
+            //si al final se logra hacer lo de multicliente
+            for (Object etiqueta : jsonObject.keySet()) {
+                String nombreEtiqueta = (String) etiqueta;
+                Object valor = jsonObject.get(nombreEtiqueta);
+
+                // Realizar acciones basadas en la etiqueta y su valor
+                //actualiza puntaje o quita vidas.
+                if (nombreEtiqueta.equals("puntaje")) {
+                    int puntaje = Integer.parseInt(valor.toString());
+                    // Hacer algo con el puntaje
+                    System.out.println("Etiqueta: " + nombreEtiqueta + ", Puntaje: " + puntaje);
+                } else if (nombreEtiqueta.equals("vidas")) {
+                    int vidas = Integer.parseInt(valor.toString());
+                    // Hacer algo con las vidas
+                    System.out.println("Etiqueta: " + nombreEtiqueta + ", Vidas: " + vidas);
+                } else {
+                    // Manejar etiquetas desconocidas o realizar acciones específicas
+                    // basadas en otras etiquetas.
+                    System.out.println("Etiqueta desconocida: " + nombreEtiqueta + ", Valor: " + valor);
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // Manejar errores de análisis JSON aquí
+        }
+
+    }
+    public void commands(String command){
         // Inicialmente se tenian estas dos lineas para leer solo una parte en especifico del string, pero es mejor hacerlo con contains()
         //int startIndex = 0; // Índice del primer carácter a leer.
         //int endIndex = 17; // Índice del carácter después del último carácter a leer.
@@ -52,7 +94,7 @@ public class manejadorMsg {
             }
         }
         else{ //Este else significa que el string que le llegó es el json y se llama al metodo para clasificar el json
-            System.out.println("es un json");
+            procesarJson(command);
         }
     }
 }

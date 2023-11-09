@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.lang.*;
 
 public class Cliente {
+    private manejadorMsg messageMNG;
     private Socket socket;
     private BufferedReader reader;
     private BufferedWriter writer;
@@ -23,6 +24,8 @@ public class Cliente {
             //this.writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.username=usuario;
             json.getInstance();
+            messageMNG = new manejadorMsg(); //crea el manejador
+            //de mensajes de java.
         }catch (IOException E){
             E.printStackTrace();
             closeEverything(socket,reader,writer);
@@ -119,8 +122,9 @@ public class Cliente {
                         System.out.println("FLAG 3 CHECKEO DE FLUJO");
                         //Se convierte a String
                         //bufferIn.readChar();  //Se lee el \0
-                        System.out.println("el mensaje es");
-                        System.out.println(messaje);
+                        //System.out.println("el mensaje es");
+                        //System.out.println(messaje);
+                        messageMNG.commands(messaje);
                     } catch (IOException e) {
                         e.printStackTrace();
                         closeEverything(socket,reader,writer);
