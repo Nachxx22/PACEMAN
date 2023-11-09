@@ -748,7 +748,7 @@ public class Model extends JPanel implements ActionListener {
     }
 
     //Se encarga de llamar el factory para crear el Enemy o Object dependiendo del mensaje recibido
-    public void factory(String mssg){
+    public void  factory(String mssg){
         if(mssg.startsWith("CreateEnemy")){
             String enemyType = mssg.substring(12);
             System.out.println("El enemigo a crear es:" +enemyType);
@@ -768,6 +768,19 @@ public class Model extends JPanel implements ActionListener {
             repaint();
         }
 
+    }
+    public void updateData(String mssg){
+        if(mssg.startsWith("UpdateScore")){
+            Integer update = Integer.valueOf(mssg.substring(12));
+            System.out.println("El puntaje es: "+update);
+            score+=update;
+
+        }
+        else if(mssg.startsWith("UpdateLife")){
+            Integer update = Integer.valueOf(mssg.substring(11));
+            System.out.println("La vida es: "+update);
+            lives+=update;
+        }
     }
 
  

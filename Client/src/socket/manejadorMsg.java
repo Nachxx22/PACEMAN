@@ -95,6 +95,13 @@ public class manejadorMsg {
                 //Poner alguna alerta de que el objeto que se quiere crear no existe
             }
         }
+
+        else if (command.contains("UpdateScore")) {
+            modelptr.updateData(command);
+        }
+        else if (command.contains("UpdateLife")) {
+            modelptr.updateData(command);
+        }
         else{ //Este else significa que el string que le llegó es el json y se llama al metodo para clasificar el json
             procesarJson(command);
         }
