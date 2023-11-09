@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.25)
-project(PACEMAN)
+cmake_minimum_required(VERSION 3.26)
+project(PACEMAN C)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_C_STANDARD 11)
 find_library(CJSON_LIB NAMES cjson HINTS usr/lib/x86_64-linux-gnu/)
 find_package(Threads REQUIRED)
 
