@@ -6,7 +6,9 @@ find_library(CJSON_LIB NAMES cjson HINTS usr/lib/x86_64-linux-gnu/)
 find_package(Threads REQUIRED)
 
 include_directories(/usr/include/cjson/cJSON.h)
-add_executable(PACEMAN Main.c
+
+add_executable(PACEMAN
+        Main.c
         Socket.h
         constantes.h
         socket.c
