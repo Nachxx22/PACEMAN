@@ -239,13 +239,14 @@ public class Model extends JPanel implements ActionListener {
 
     private void death() {
 
-    	lives--;
+    	//lives--;
 
         if (lives == 0) {
             inGame = false;
         }
 
         continueLevel();
+        continueLevel2();
     }
 
     private void moveGhosts(Graphics2D g2d) {
@@ -465,7 +466,7 @@ public class Model extends JPanel implements ActionListener {
                 if(objects.get(i).getScore()== 500){
                     //Se envia el mensaje al servidor que hubo una colision con una pastilla y el puntaje de la pastilla
                     System.out.println("Colisionó con pastilla");
-                    score+=objects.get(i).getScore();//Sumar el puntaje del objeto
+                    //score+=objects.get(i).getScore();//Sumar el puntaje del objeto
                     tags[0]="colision4";
                     valores[0]=objects.get(i).getScore();
                     clientes.sendMessage(tags,valores);
@@ -473,7 +474,7 @@ public class Model extends JPanel implements ActionListener {
                 }else{
                     //Se envia el mensaje al servidor que hubo una colision con un objeto y se envia el puntaje del objeto
                     System.out.println("Se suman: "+objects.get(i).getScore()+" Puntos");
-                    score+=objects.get(i).getScore();//Sumar el puntaje del objeto
+                    //score+=objects.get(i).getScore();//Sumar el puntaje del objeto
                     tags[0]="colision3";
                     valores[0]=objects.get(i).getScore();
                     clientes.sendMessage(tags,valores);
@@ -710,12 +711,14 @@ public class Model extends JPanel implements ActionListener {
             System.out.println("La vida es: "+valor);
             score=valor;
         }
-        /*
-        else if(mssg.startsWith("UpdateSpeed")){
+
+    }
+    public void updateData2(String mssg){
+        if(mssg.startsWith("UpdateSpeed")){
             Integer update = Integer.valueOf(mssg.substring(12));
             System.out.println("La velocidad de los enemigos es: "+update);
             speedenemys=update;
-        }*/
+        }
     }
 
  
