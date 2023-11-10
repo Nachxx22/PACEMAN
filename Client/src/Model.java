@@ -700,23 +700,22 @@ public class Model extends JPanel implements ActionListener {
 
     }
     //Se encarga de manejar los datos enviados por el servidor en el caso de score,lifes y speed de los enemigos
-    public void updateData(String mssg){
-        if(mssg.startsWith("UpdateScore")){
-            Integer update = Integer.valueOf(mssg.substring(12));
-            System.out.println("El puntaje es: "+update);
-            score=update;
+    public void updateData(String comando , int valor){
+        if(comando.equals("vidas")){
+            //actualiza score
+            lives=valor;
 
         }
-        else if(mssg.startsWith("UpdateLife")){
-            Integer update = Integer.valueOf(mssg.substring(11));
-            System.out.println("La vida es: "+update);
-            lives=update;
+        else if(comando.equals("puntaje")){
+            System.out.println("La vida es: "+valor);
+            score=valor;
         }
+        /*
         else if(mssg.startsWith("UpdateSpeed")){
             Integer update = Integer.valueOf(mssg.substring(12));
             System.out.println("La velocidad de los enemigos es: "+update);
             speedenemys=update;
-        }
+        }*/
     }
 
  
