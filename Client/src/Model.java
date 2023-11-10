@@ -19,7 +19,6 @@ import Client.src.AbstractFactory.Entity.Enemy.*;
 import Client.src.AbstractFactory.Entity.Object.Object;
 import Client.src.Controller.JoystickReader;
 import Client.src.socket.Cliente;
-import Client.src.socket.Json;
 
 public class Model extends JPanel implements ActionListener {
 
@@ -37,6 +36,7 @@ public class Model extends JPanel implements ActionListener {
     private Integer N_GHOSTS = 3;
 
     private Integer powered;
+    private Integer speedenemys;
     private Integer lives, score;
     private Integer scoreupdate=100;
     private Integer[] dx, dy;
@@ -46,7 +46,7 @@ public class Model extends JPanel implements ActionListener {
     private JoystickReader reader;
     private Image heart, ghost;
     private Image up, down, left, right;
-    private Image cherryIMG,strawberryIMG, pastillaIMG, appleIMG, bashfulIMG, speedyIMG, pinkyIMG, shadowIMG;
+    //private Image cherryIMG,strawberryIMG, pastillaIMG, appleIMG, bashfulIMG, speedyIMG, pinkyIMG, shadowIMG; //Para probar si cargan las imagenes nada mas iniciar el juego
 
     private Integer pacman_x, pacman_y, pacmand_x, pacmand_y;
     private  Integer req_dx, req_dy;
@@ -99,18 +99,18 @@ public class Model extends JPanel implements ActionListener {
         enemyFactory = new EnemyFactory();
         objectFactory = new ObjectFactory();
         loadImages();
+
         // Crear objeto para lector de joystick de Arduino
         JoystickReader reader = new JoystickReader();
-
         // Iniciar hilo para leer continuamente los valores del joystick
         Thread joystickThread = new Thread(reader);
         joystickThread.start();
         initVariables();
 
+        //Para abrir el socket e iniciar el hilo para estar leyendo los mensajes entrantes
         Socket socket = new Socket("localhost",8884);
         clientes = new Cliente(socket , "luis");
-        clientes.readMessaje();
-
+        clientes.readMessage();
 
         addKeyListener(new TAdapter());
         addKeyListener(new TAdapter2(reader));
@@ -131,15 +131,19 @@ public class Model extends JPanel implements ActionListener {
         ghost = new ImageIcon("Client/src/images/ghost.gif").getImage();
         heart = new ImageIcon("Client/src/images/heart.png").getImage();
 
+        /*
+        Imagenes de Objetos
         cherryIMG = new ImageIcon("Client/src/images/cherry.png").getImage();
         strawberryIMG = new ImageIcon("Client/rc/images/strawberry.png").getImage();
         pastillaIMG = new ImageIcon("Client/src/images/pastilla.png").getImage();
         appleIMG = new ImageIcon("Client/src/images/apple.png").getImage();
-
+        Imagenes de Enemigos
         bashfulIMG = new ImageIcon("Client/src/images/Bashful.gif").getImage();
         speedyIMG = new ImageIcon("Client/src/images/Speedy.gif").getImage();
         pinkyIMG = new ImageIcon("Client/src/images/Pinky.gif").getImage();
         shadowIMG = new ImageIcon("Client/src/images/Shadow.gif").getImage();
+
+         */
 
     }
        private void initVariables() {
@@ -161,6 +165,7 @@ public class Model extends JPanel implements ActionListener {
         dx = new Integer[4];
         dy = new Integer[4];
         powered=0;
+        speedenemys=1;
         
         timer = new Timer(40, this);
         timer.start();
@@ -196,7 +201,7 @@ public class Model extends JPanel implements ActionListener {
         g.setColor(new Color(5, 181, 79));
         String s = "Score: " + score;
         g.drawString(s, SCREEN_SIZE / 2 + 96, SCREEN_SIZE + 16);
-        if(score%10000==0 && score !=0){lives++;score+=scoreupdate;} //importante cambiar esto con lo del servidor
+        ///if(score%10000==0 && score !=0){lives++;score+=scoreupdate;} //importante cambiar esto con lo del servidor
         for (int i = 0; i < lives; i++) {
             g.drawImage(heart, i * 28 + 8, SCREEN_SIZE + 1, this);
         }
@@ -302,8 +307,8 @@ public class Model extends JPanel implements ActionListener {
 
             }
 
-            ghost_x[i] = ghost_x[i] + (ghost_dx[i] * ghostSpeed[i]);
-            ghost_y[i] = ghost_y[i] + (ghost_dy[i] * ghostSpeed[i]);
+            ghost_x[i] = ghost_x[i] + (ghost_dx[i] * ghostSpeed[i]*speedenemys);
+            ghost_y[i] = ghost_y[i] + (ghost_dy[i] * ghostSpeed[i]*speedenemys);
             drawGhost(g2d, ghost_x[i] + 1, ghost_y[i] + 1);
 
             //Aqui se maneja las colisiones con los fantasmas
@@ -311,13 +316,14 @@ public class Model extends JPanel implements ActionListener {
                     && pacman_y > (ghost_y[i] - 12) && pacman_y < (ghost_y[i] + 12)
                     && inGame) {
 
-                if(powered==1){
+                if(powered==1){ //sumar puntaje, los ghost no son eliminados y se quita el poder al pacman
                     powered=0;
                     tags[0]="colision2";
                     valores[0]=100;
                     clientes.sendMessage(tags,valores);
-                    //sumar puntaje, los ghost no son eliminados
+
                 }else{
+                    //reduce una vida al jugador y reincia la posicion del pacman
                     tags[0]="colision1";
                     valores[0]=1;
                     clientes.sendMessage(tags,valores);
@@ -365,15 +371,11 @@ public class Model extends JPanel implements ActionListener {
                 if (count == 0) {
 
                     if ((screenData[pos] & 15) == 15) {
-                        //enemy_dx[i] = 0;
                         enemies.get(i).setdX(0);
                         enemies.get(i).setdY(0);
-                        //enemy_dy[i] = 0;
                     } else {
-                       // enemy_dx[i] = -enemy_dx[i];
                         enemies.get(i).setdX(-(enemies.get(i).getdX()));
                         enemies.get(i).setdY(-(enemies.get(i).getdY()));
-                        //enemy_dy[i] = -enemy_dy[i];
                     }
 
                 } else {
@@ -383,20 +385,16 @@ public class Model extends JPanel implements ActionListener {
                     if (count > 3) {
                         count = 3;
                     }
-
-                    //enemy_dx[i] = dx[count];
                     enemies.get(i).setdX(dx[count]);
                     enemies.get(i).setdY(dy[count]);
-                    //enemy_dy[i] = dy[count];
                 }
 
             }
 
-            enemy_x[i] = (enemies.get(i).getX())+ ((enemies.get(i).getdX())*(enemies.get(i).getSpeed()));
-            enemy_y[i] = (enemies.get(i).getY()) + ((enemies.get(i).getdY())*(enemies.get(i).getSpeed()));
+            enemy_x[i] = (enemies.get(i).getX())+ ((enemies.get(i).getdX())*(enemies.get(i).getSpeed()*speedenemys));
+            enemy_y[i] = (enemies.get(i).getY()) + ((enemies.get(i).getdY())*(enemies.get(i).getSpeed()*speedenemys));
             enemies.get(i).setX(enemy_x[i]);
             enemies.get(i).setY(enemy_y[i]);
-            //drawGhost(g2d,enemy_x[i] + 1, enemy_y[i] + 1);
             enemies.get(i).draw(g2d,enemies.get(i).getX() + 1, enemies.get(i).getY() + 1);
 
             //Para manejar las colisiones del pacman con los enemigos
@@ -404,18 +402,16 @@ public class Model extends JPanel implements ActionListener {
                     && pacman_y > (enemy_y[i] - 12) && pacman_y < (enemy_y[i] + 12)
                     && inGame) {
 
-                //mensaje al servidor colision con enemy
-                //mensaje del servidor con la instruccion
                 if(powered==1){
-                    //sumar puntaje, los ghost no son eliminados
-                    powered=0;
-                    enemies.remove(i);
+                    //sumar puntaje por enemigo especial eliminado
+                    powered=0; //se quita el poder del pacman
+                    enemies.remove(i); // Se elimina el enemigo especial colisionado
+                    //se envia un mensaje del servidor para informar de la colision y el puntaje a sumar
                     tags[0]="colision2";
                     valores[0]=100;
                     clientes.sendMessage(tags,valores);
                 }else{
-                    //PARA INDICARLE AL SERVIDOR QUE HUBO UNA
-                    //COLISION.
+                    //para indicarle al servidor que hubo una colision
                     tags[0]="colision1";
                     valores[0]=1;
                     clientes.sendMessage(tags,valores);
@@ -459,51 +455,15 @@ public class Model extends JPanel implements ActionListener {
                     count++;
                 }
 
-                if (count == 0) {
-
-                    if ((screenData[pos] & 15) == 15) {
-                        //enemy_dx[i] = 0;
-                        enemies.get(i).setdX(0);
-                        enemies.get(i).setdY(0);
-                        //enemy_dy[i] = 0;
-                    } else {
-                        // enemy_dx[i] = -enemy_dx[i];
-                        enemies.get(i).setdX(-(enemies.get(i).getdX()));
-                        enemies.get(i).setdY(-(enemies.get(i).getdY()));
-                        //enemy_dy[i] = -enemy_dy[i];
-                    }
-
-                } else {
-
-                    count = (int) (Math.random() * count);
-
-                    if (count > 3) {
-                        count = 3;
-                    }
-
-                    //enemy_dx[i] = dx[count];
-                    //enemies.get(i).setdX(dx[count]);
-                    //enemies.get(i).setdY(dy[count]);
-                    //enemy_dy[i] = dy[count];
-                }
-
             }
-
-            //object_x[i] = (objects.get(i).getX())+ ((objects.get(i).getdX())*(enemies.get(i).getSpeed()));
-            //object_y[i] = (objects.get(i).getY()) + ((objects.get(i).getdY())*(enemies.get(i).getSpeed()));
-            //enemies.get(i).setX(enemy_x[i]);
-            //enemies.get(i).setY(enemy_y[i]);
-            //drawGhost(g2d,enemy_x[i] + 1, enemy_y[i] + 1);
-            //enemies.get(i).draw(g2d,enemies.get(i).getX() + 1, enemies.get(i).getY() + 1);
-
             //Para manejar las colisiones del pacman con los objetos
             if (pacman_x > (objects.get(i).getX() - 12) && pacman_x < (objects.get(i).getX() + 12)
                     && pacman_y > (objects.get(i).getY() - 12) && pacman_y < ( objects.get(i).getY() + 12)
                     && inGame) {
                 System.out.println(objects.get(i));
 
-                //if (objects.get(i). instanceof PastillaObject) {
                 if(objects.get(i).getScore()== 500){
+                    //Se envia el mensaje al servidor que hubo una colision con una pastilla y el puntaje de la pastilla
                     System.out.println("Colisionó con pastilla");
                     score+=objects.get(i).getScore();//Sumar el puntaje del objeto
                     tags[0]="colision4";
@@ -511,49 +471,18 @@ public class Model extends JPanel implements ActionListener {
                     clientes.sendMessage(tags,valores);
                     powered=1;
                 }else{
+                    //Se envia el mensaje al servidor que hubo una colision con un objeto y se envia el puntaje del objeto
                     System.out.println("Se suman: "+objects.get(i).getScore()+" Puntos");
                     score+=objects.get(i).getScore();//Sumar el puntaje del objeto
                     tags[0]="colision3";
                     valores[0]=objects.get(i).getScore();
                     clientes.sendMessage(tags,valores);
 
-                    //Eliminar el objeto
-                    //mensaje al servidor colision con enemy
-                    //mensaje del servidor con la instruccion
-                    //dying = true;
-
                 }
+                //Elimina el objecto que fue colisionado de la lista de objects para que no se vuelva a printear
                 objects.remove(i);
             }
         }
-    }
-    /*
-    private void ControllerMoves(JoystickReader reader) {
-        if (inGame) {
-            if (reader.getXValue() < 480) {
-                //Mover pacman hacia la izquierda
-                req_dx = -1;
-                req_dy = 0;
-            } else if (reader.getXValue() > 680) {
-                //Mover pacman hacia la derecha
-                req_dx = 1;
-                req_dy = 0;
-            } else if (reader.getYValue() < 460) {
-                //Mover pacman hacia arriba
-                req_dx = 0;
-                req_dy = -1;
-            } else if (reader.getYValue() > 680) {
-                //Mover pacman hacia abajo
-                req_dx = 0;
-                req_dy = 1;
-            }
-        }
-    }
-
-     */
-
-    private void HandleMessage(String mssg){
-        //Para manejar los mensajes del servidor recibidos por socket
     }
 
     private void drawGhost(Graphics2D g2d, Integer x, Integer y) {
@@ -572,7 +501,8 @@ public class Model extends JPanel implements ActionListener {
             //Colisiones con los puntos normales
             if ((ch & 16) != 0) {
                 screenData[pos] = (short) (ch & 15);
-                score+=scoreupdate;
+                //score+=scoreupdate; // la instruccion para sumar los puntos tiene que venir del servidor
+                //Se envia un emnsaje al servidor para avisar de una colision con los puntos y envia el puntaje a sumar al score
                 tags[0]="colision3";
                 valores[0]=scoreupdate;
                 clientes.sendMessage(tags,valores);
@@ -701,7 +631,7 @@ public class Model extends JPanel implements ActionListener {
                 random = currentSpeed;
             }
 
-            ghostSpeed[i] = validSpeeds[random];
+            ghostSpeed[i] = validSpeeds[random]*speedenemys;
         }
 
         pacman_x = 7 * BLOCK_SIZE;  //start position
@@ -731,10 +661,10 @@ public class Model extends JPanel implements ActionListener {
 
             System.out.println("cantidad de enemigos: "+ enemies.size());
             if (enemies.size() != 0){
-                enemySpeed[i] = enemies.get(i).getSpeed();
+                enemySpeed[i] = enemies.get(i).getSpeed()*speedenemys;
             }else{
                 factory("CreateEnemy Shadow");
-                enemySpeed[i]=enemies.get(i).getSpeed();
+                enemySpeed[i]=enemies.get(i).getSpeed()*speedenemys;
             }
         }
 
@@ -769,6 +699,7 @@ public class Model extends JPanel implements ActionListener {
         }
 
     }
+    //Se encarga de manejar los datos enviados por el servidor en el caso de score,lifes y speed de los enemigos
     public void updateData(String mssg){
         if(mssg.startsWith("UpdateScore")){
             Integer update = Integer.valueOf(mssg.substring(12));
@@ -780,6 +711,11 @@ public class Model extends JPanel implements ActionListener {
             Integer update = Integer.valueOf(mssg.substring(11));
             System.out.println("La vida es: "+update);
             lives+=update;
+        }
+        else if(mssg.startsWith("UpdateSpeed")){
+            Integer update = Integer.valueOf(mssg.substring(12));
+            System.out.println("La velocidad de los enemigos es: "+update);
+            speedenemys=update;
         }
     }
 

@@ -102,6 +102,9 @@ public class manejadorMsg {
         else if (command.contains("UpdateLife")) {
             modelptr.updateData(command);
         }
+        else if (command.contains("UpdateSpeed")) {
+            modelptr.updateData(command);
+        }
         else{ //Este else significa que el string que le llegó es el json y se llama al metodo para clasificar el json
             procesarJson(command);
         }
