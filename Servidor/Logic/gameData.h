@@ -8,6 +8,7 @@
 #include <string.h>
 struct gameData{
     int puntaje;
+    int puntajeCounter;
     int vidas;
     //el cliente realiza las cosas de lo de las colisiones y demas
     //el cliente hace una colision y aca le dice que hacer.

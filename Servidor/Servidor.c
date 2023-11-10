@@ -177,8 +177,10 @@ void* escucharCliente(void *ptr){
     //STRUCTS NECESARIOS
     struct datatouse* data = (struct datatouse*)ptr;
     struct gameData* juego1 = (struct gameData*)malloc(sizeof(struct gameData));
+    //EL STRUCT GAMEDATA ESTA EN GAMEDATA.
     juego1->puntaje=0;
     juego1->vidas=3;
+    juego1->puntajeCounter=0;
     //CONSTANTES NECESARIAS
     int buffer;
     int maximo;

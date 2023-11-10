@@ -22,15 +22,15 @@ public class manejadorMsg {
             for (Object etiqueta : jsonObject.keySet()) {
                 String nombreEtiqueta = (String) etiqueta;
                 Object valor = jsonObject.get(nombreEtiqueta);
-
                 // Realizar acciones basadas en la etiqueta y su valor
                 //actualiza puntaje o quita vidas.
                 if (nombreEtiqueta.equals("puntaje")) {
                     int puntaje = Integer.parseInt(valor.toString());
-                    // Hacer algo con el puntaje
+                    modelptr.updateData("puntaje",puntaje);
                     System.out.println("Etiqueta: " + nombreEtiqueta + ", Puntaje: " + puntaje);
                 } else if (nombreEtiqueta.equals("vidas")) {
                     int vidas = Integer.parseInt(valor.toString());
+                    modelptr.updateData("vidas",vidas);
                     // Hacer algo con las vidas
                     System.out.println("Etiqueta: " + nombreEtiqueta + ", Vidas: " + vidas);
                 } else {
@@ -95,16 +95,7 @@ public class manejadorMsg {
                 //Poner alguna alerta de que el objeto que se quiere crear no existe
             }
         }
-
-        else if (command.contains("UpdateScore")) {
-            modelptr.updateData(command);
-        }
-        else if (command.contains("UpdateLife")) {
-            modelptr.updateData(command);
-        }
-        else if (command.contains("UpdateSpeed")) {
-            modelptr.updateData(command);
-        }
+        //falta el caso de actualizar speedy
         else{ //Este else significa que el string que le llegó es el json y se llama al metodo para clasificar el json
             procesarJson(command);
         }
