@@ -108,7 +108,7 @@ public class Model extends JPanel implements ActionListener {
         initVariables();
 
         //Para abrir el socket e iniciar el hilo para estar leyendo los mensajes entrantes
-        Socket socket = new Socket("localhost",8884);
+        Socket socket = new Socket("localhost",8888);
         clientes = new Cliente(socket , "luis");
         clientes.readMessage();
 
@@ -704,13 +704,13 @@ public class Model extends JPanel implements ActionListener {
         if(mssg.startsWith("UpdateScore")){
             Integer update = Integer.valueOf(mssg.substring(12));
             System.out.println("El puntaje es: "+update);
-            score+=update;
+            score=update;
 
         }
         else if(mssg.startsWith("UpdateLife")){
             Integer update = Integer.valueOf(mssg.substring(11));
             System.out.println("La vida es: "+update);
-            lives+=update;
+            lives=update;
         }
         else if(mssg.startsWith("UpdateSpeed")){
             Integer update = Integer.valueOf(mssg.substring(12));
