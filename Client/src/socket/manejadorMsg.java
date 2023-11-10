@@ -95,7 +95,10 @@ public class manejadorMsg {
                 //Poner alguna alerta de que el objeto que se quiere crear no existe
             }
         }
-        //falta el caso de actualizar speedy
+        else if (command.contains("UpdateSpeed")){
+            modelptr.updateData2(command);
+        }
+
         else{ //Este else significa que el string que le llegó es el json y se llama al metodo para clasificar el json
             procesarJson(command);
         }
