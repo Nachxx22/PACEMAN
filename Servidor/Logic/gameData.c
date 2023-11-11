@@ -38,7 +38,12 @@ void analizarInfo(const char *clave, int valor,struct gameData* juego) {
         }
         printf("mensaje: %s, Valor: %d\n", clave, valor);
         // Acciones específicas para increemntar puntaje
-    } else {
+    }else if(strcmp(clave,"reinicio")==0){
+        juego->puntaje=0;
+        juego->puntajeCounter=0;
+        juego->vidas=3;
+    }
+    else {
         // Otras acciones por defecto
     }
 
