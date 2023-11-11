@@ -467,7 +467,7 @@ public class Model extends JPanel implements ActionListener {
                     //Se envia el mensaje al servidor que hubo una colision con una pastilla y el puntaje de la pastilla
                     System.out.println("Colisionó con pastilla");
                     //score+=objects.get(i).getScore();//Sumar el puntaje del objeto
-                    tags[0]="colision4";
+                    tags[0]="colision3";
                     valores[0]=objects.get(i).getScore();
                     clientes.sendMessage(tags,valores);
                     powered=1;
