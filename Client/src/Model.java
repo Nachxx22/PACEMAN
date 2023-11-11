@@ -596,8 +596,11 @@ public class Model extends JPanel implements ActionListener {
 
     private void initGame() {
 
-    	lives = 3;
-        score = 0;
+    	//lives = 3;
+        //score = 0;
+        tags[0]="reinicio";
+        valores[0]=0;
+        clientes.sendMessage(tags,valores);
         initLevel();
         N_GHOSTS = 3;
         currentSpeed = 3;
